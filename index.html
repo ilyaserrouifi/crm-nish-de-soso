@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Niche CRM - Plateforme de gestion complète pour entreprises modernes." />
+  <meta name="keywords" content="CRM, Niche, plateforme, gestion leads, dashboard" />
+  <meta name="author" content="Niche CRM" />
+  <title>Niche CRM — Connexion | Plateforme intelligente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=DM+Sans:wght@400;500;600;700&family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue-primary: #2233FF;
+      --blue-secondary: #4455FF;
+      --blue-tertiary: #6677FF;
+      --blue-light: #8899FF;
+      --blue-pale: #C8CFFF;
+      --blue-ghost: #E8EBFF;
+      --blue-glow: rgba(34, 51, 255, 0.4);
+      --bg-deep: #0A0A0F;
+      --bg-surface: rgba(18, 18, 28, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-blue: rgba(34, 51, 255, 0.3);
+      --text-white: #F0F0FC;
+      --text-muted: #9A9AC0;
+      --green-accent: #22C55E;
+      --transition-smooth: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 1.5rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+      animation: floatBlob 20s infinite alternate;
+    }
+    @keyframes floatBlob {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -30px) scale(1.08); }
+    }
+    .blob-1 { width: 580px; height: 580px; background: #2233FF; top: -200px; left: 5%; opacity: 0.12; }
+    .blob-2 { width: 480px; height: 480px; background: #4455FF; bottom: -120px; right: 0%; opacity: 0.1; }
+    .blob-3 { width: 350px; height: 350px; background: #7C3AED; top: 45%; right: 10%; opacity: 0.08; }
+
+    .container {
+      position: relative;
+      z-index: 12;
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+      animation: fadeInUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2.2rem;
+      padding: 2rem;
+      box-shadow: 0 35px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(34, 51, 255, 0.15);
+    }
+
+    /* ========== LOGO "ni che" AVEC POINT BLEU ========== */
+    .logo-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      perspective: 800px;
+    }
+    .logo-3d-container {
+      animation: logoGlowPulse 2s ease-in-out infinite;
+    }
+    @keyframes logoGlowPulse {
+      0%, 100% { filter: drop-shadow(0 0 5px rgba(34, 51, 255, 0.5)); }
+      50% { filter: drop-shadow(0 0 20px rgba(34, 51, 255, 0.8)); }
+    }
+    .logo-3d {
+      animation: logoSpin 5s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+      transform-style: preserve-3d;
+    }
+    @keyframes logoSpin {
+      0% { transform: rotateY(0deg) rotateX(0deg) scale(0.7); opacity: 0; }
+      15% { transform: rotateY(180deg) rotateX(15deg) scale(1.15); opacity: 1; }
+      35% { transform: rotateY(360deg) rotateX(0deg) scale(1); opacity: 1; }
+      55% { transform: rotateY(360deg) rotateX(0deg) scale(1.05); opacity: 1; }
+      100% { transform: rotateY(360deg) rotateX(0deg) scale(1); opacity: 1; }
+    }
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px 24px;
+      border-radius: 60px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .logo-ni {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 72px;
+      color: var(--text-white);
+      line-height: 0.9;
+      letter-spacing: -4px;
+      position: relative;
+      display: inline-block;
+    }
+    .logo-dot-blue {
+      width: 14px;
+      height: 14px;
+      background: var(--blue-primary);
+      border-radius: 50%;
+      position: absolute;
+      top: 6px;
+      right: -6px;
+      box-shadow: 0 0 10px var(--blue-primary);
+      animation: dotPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.8; }
+    }
+    .logo-separator {
+      width: 2px;
+      height: 50px;
+      background: linear-gradient(180deg, transparent, var(--blue-light), transparent);
+      margin: 0 8px;
+    }
+    .logo-che {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 28px;
+      color: var(--text-white);
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #fff, var(--blue-light));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .logo-badge {
+      text-align: center;
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+
+    /* ========== ICÔNES ========== */
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      background: rgba(34, 51, 255, 0.04);
+      border-radius: 1.4rem;
+      padding: 1.2rem 1rem;
+      border: 1px solid rgba(34, 51, 255, 0.2);
+      margin-bottom: 1.8rem;
+    }
+    .icon-card {
+      background: rgba(34, 51, 255, 0.08);
+      border-radius: 14px;
+      padding: 10px 6px;
+      text-align: center;
+      transition: var(--transition-smooth);
+      border: 1px solid transparent;
+      cursor: default;
+      animation: fadeScale 0.4s ease backwards;
+    }
+    .icon-card:nth-child(1) { animation-delay: 0.05s; }
+    .icon-card:nth-child(2) { animation-delay: 0.1s; }
+    .icon-card:nth-child(3) { animation-delay: 0.15s; }
+    .icon-card:nth-child(4) { animation-delay: 0.2s; }
+    .icon-card:nth-child(5) { animation-delay: 0.25s; }
+    .icon-card:nth-child(6) { animation-delay: 0.3s; }
+    .icon-card:nth-child(7) { animation-delay: 0.35s; }
+    .icon-card:nth-child(8) { animation-delay: 0.4s; }
+    .icon-card:nth-child(9) { animation-delay: 0.45s; }
+    .icon-card:nth-child(10) { animation-delay: 0.5s; }
+    .icon-card:nth-child(11) { animation-delay: 0.55s; }
+    .icon-card:nth-child(12) { animation-delay: 0.6s; }
+    @keyframes fadeScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .icon-card:hover {
+      background: rgba(34, 51, 255, 0.2);
+      border-color: rgba(34, 51, 255, 0.4);
+      transform: translateY(-3px);
+    }
+    .icon-svg {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 6px;
+    }
+    .icon-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== FORMULAIRES ========== */
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .sub {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      border-left: 2px solid var(--blue-primary);
+      padding-left: 0.75rem;
+    }
+    .input-field {
+      margin-bottom: 1.2rem;
+    }
+    .input-field label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .input-field input {
+      width: 100%;
+      background: rgba(10, 10, 16, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1rem;
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      color: white;
+      transition: var(--transition-smooth);
+      outline: none;
+    }
+    .input-field input:focus {
+      border-color: var(--blue-primary);
+      box-shadow: 0 0 0 3px rgba(34, 51, 255, 0.2);
+    }
+
+    .role-header {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin: 1rem 0 0.7rem 0;
+    }
+    .role-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.7rem;
+      margin-bottom: 1.8rem;
+    }
+    .role-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1rem;
+      padding: 0.7rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      text-align: center;
+    }
+    .role-btn:hover {
+      background: rgba(34, 51, 255, 0.12);
+      border-color: rgba(34, 51, 255, 0.5);
+      color: white;
+      transform: translateY(-2px);
+    }
+    .role-btn.active {
+      background: rgba(34, 51, 255, 0.22);
+      border-color: var(--blue-primary);
+      color: white;
+      box-shadow: 0 2px 12px rgba(34, 51, 255, 0.25);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
+      border: none;
+      border-radius: 1.5rem;
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 20px rgba(34, 51, 255, 0.35);
+    }
+    .login-btn:hover {
+      background: linear-gradient(135deg, var(--blue-secondary), var(--blue-tertiary));
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(34, 51, 255, 0.5);
+    }
+    .arrow-icon {
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+    }
+    .login-btn:hover .arrow-icon {
+      transform: translateX(6px);
+    }
+
+    .live-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      padding: 0.8rem;
+      background: rgba(34, 51, 255, 0.05);
+      border-radius: 1rem;
+      border: 1px solid rgba(34, 51, 255, 0.15);
+    }
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+    .stat-number {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--blue-light);
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .footer-access {
+      margin-top: 1.2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .footer-access a {
+      color: var(--blue-light);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(136, 153, 255, 0.5);
+    }
+    .footer-access a:hover {
+      color: white;
+    }
+
+    .quick-preview {
+      margin-top: 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(34, 51, 255, 0.2);
+      border-radius: 1.2rem;
+      padding: 0.9rem 1rem;
+    }
+    .quick-preview p {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+    .module-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .module-links a {
+      background: rgba(34, 51, 255, 0.1);
+      border: 1px solid rgba(34, 51, 255, 0.25);
+      border-radius: 30px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--blue-light);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+    .module-links a:hover {
+      background: rgba(34, 51, 255, 0.3);
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .container { max-width: 95%; }
+      .login-card { padding: 1.5rem; }
+      .icons-grid { grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+      .logo-ni { font-size: 52px; }
+      .logo-che { font-size: 22px; }
+      .logo-separator { height: 38px; }
+      h1 { font-size: 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .icons-grid { grid-template-columns: repeat(2, 1fr); }
+      .role-buttons { gap: 0.5rem; }
+      .role-btn { font-size: 0.7rem; padding: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="container">
+  <div class="login-card">
+
+    <!-- LOGO "ni che" AVEC POINT BLEU + ANIMATION 3D 5 SECONDES -->
+    <div class="logo-wrapper">
+      <div class="logo-3d-container">
+        <div class="logo-3d">
+          <div class="logo">
+            <div class="logo-ni">
+              ni
+              <span class="logo-dot-blue"></span>
+            </div>
+            <div class="logo-separator"></div>
+            <div class="logo-che">che</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="logo-badge">PLATEFORME CRM · ENTERPRISE READY</div>
+
+    <!-- 12 ICÔNES -->
+    <div class="icons-grid">
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 42"><rect x="2" y="10" width="44" height="28" rx="6" fill="#C8CFFF"/><rect x="2" y="6" width="20" height="10" rx="4" fill="#2233FF"/><rect x="2" y="10" width="44" height="28" rx="6" fill="#8899FF" opacity="0.5"/></svg><div class="icon-label">Dashboard</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 28"><rect x="4" y="3" width="40" height="22" rx="11" fill="#E8EBFF" stroke="#C8CFFF" stroke-width="1.5"/><circle cx="34" cy="14" r="9" fill="#2233FF"/></svg><div class="icon-label">Pipeline</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 44 44"><path d="M12 4 L32 4 L36 8 L36 36 L32 40 L12 40 L8 36 L8 8 L12 4Z" fill="#C8CFFF" stroke="#8899FF" stroke-width="1.5"/><circle cx="22" cy="22" r="5" fill="#2233FF" opacity="0.7"/></svg><div class="icon-label">Appels</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 44 46"><rect x="3" y="8" width="38" height="34" rx="7" fill="#C8CFFF"/><rect x="3" y="8" width="38" height="12" rx="7" fill="#8899FF"/><line x1="13" y1="3" x2="13" y2="14" stroke="#2233FF" stroke-width="3"/><line x1="31" y1="3" x2="31" y2="14" stroke="#2233FF" stroke-width="3"/><text x="22" y="34" font-size="13" fill="#2233FF" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="600">31</text></svg><div class="icon-label">Réunions</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 44"><rect x="4" y="6" width="40" height="32" rx="6" fill="none" stroke="#2233FF" stroke-width="2.5"/><path d="M14 22 L19 28 L34 12" stroke="#8899FF" stroke-width="3" fill="none" stroke-linecap="round"/></svg><div class="icon-label">Tâches</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 44 48"><circle cx="22" cy="22" r="16" fill="none" stroke="#2233FF" stroke-width="2.5"/><path d="M22 12 L22 32 M18 16 Q22 13 26 16 Q28 18 26 20 Q22 22 18 24 Q16 26 18 28 Q22 31 26 28" stroke="#8899FF" stroke-width="2.5" fill="none"/></svg><div class="icon-label">Finance</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 44 44"><circle cx="22" cy="14" r="7" fill="none" stroke="#2233FF" stroke-width="2.5"/><path d="M5 36 Q5 26 22 26 Q39 26 39 36" fill="none" stroke="#8899FF" stroke-width="2.5"/><circle cx="34" cy="10" r="4" fill="#2233FF" opacity="0.5"/></svg><div class="icon-label">Équipe</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 44"><rect x="4" y="24" width="8" height="16" rx="2" fill="#2233FF" opacity="0.5"/><rect x="16" y="14" width="8" height="26" rx="2" fill="#2233FF"/><rect x="28" y="4" width="8" height="36" rx="2" fill="#8899FF"/><rect x="40" y="18" width="6" height="22" rx="2" fill="#C8CFFF"/></svg><div class="icon-label">Analytics</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 42"><rect x="4" y="10" width="40" height="28" rx="6" fill="none" stroke="#2233FF" stroke-width="2"/><path d="M16 10 L16 6 Q16 3 20 3 L28 3 Q32 3 32 6 L32 10" fill="none" stroke="#8899FF" stroke-width="2"/><circle cx="24" cy="24" r="4" fill="#2233FF" opacity="0.5"/></svg><div class="icon-label">Clients</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 42 48"><rect x="5" y="20" width="32" height="24" rx="6" fill="#C8CFFF"/><path d="M11 20 L11 14 Q11 4 21 4 Q31 4 31 14 L31 20" fill="none" stroke="#8899FF" stroke-width="4"/><circle cx="21" cy="32" r="4" fill="#2233FF" opacity="0.7"/></svg><div class="icon-label">Sécurité</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 42"><path d="M4 8 L4 32 Q4 36 8 36 L36 36 L44 40 L40 32 Q44 32 44 28 L44 8 Q44 4 40 4 L8 4 Q4 4 4 8Z" fill="#C8CFFF"/><circle cx="16" cy="20" r="2.5" fill="#2233FF"/><circle cx="24" cy="20" r="2.5" fill="#2233FF"/><circle cx="32" cy="20" r="2.5" fill="#2233FF"/></svg><div class="icon-label">Chat</div></div>
+      <div class="icon-card"><svg class="icon-svg" viewBox="0 0 48 44"><path d="M4 36 L18 22 L28 32 L44 8" stroke="#2233FF" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="44" cy="8" r="4" fill="#2233FF"/><circle cx="28" cy="32" r="4" fill="#8899FF" opacity="0.6"/></svg><div class="icon-label">Growth</div></div>
+    </div>
+
+    <h1>Content de te revoir</h1>
+    <p class="sub">Connectez-vous à votre espace de travail sécurisé</p>
+
+    <div class="input-field">
+      <label>E-MAIL PROFESSIONNEL</label>
+      <input type="email" id="loginEmail" placeholder="contact@niche.com" value="contact@niche.com" />
+    </div>
+    <div class="input-field">
+      <label>MOT DE PASSE</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" value="niche2026" />
+    </div>
+
+    <span class="role-header">SE CONNECTER EN TANT QUE</span>
+    <div class="role-buttons" id="roleContainer">
+      <button class="role-btn active" data-role="admin">⚡ Administrateur</button>
+      <button class="role-btn" data-role="chef-projet">🎯 Chef de projet</button>
+      <button class="role-btn" data-role="freelancer">💼 Freelancer</button>
+      <button class="role-btn" data-role="client">👤 Client</button>
+    </div>
+
+    <button class="login-btn" id="signinBtn">ACCÉDER À MON ESPACE <span class="arrow-icon">→</span></button>
+
+    <div class="live-stats">
+      <div class="stat-item"><div class="stat-number">1,482</div><div class="stat-label">Utilisateurs</div></div>
+      <div class="stat-item"><div class="stat-number">247</div><div class="stat-label">Projets</div></div>
+      <div class="stat-item"><div class="stat-number">98%</div><div class="stat-label">Satisfaction</div></div>
+      <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Support</div></div>
+    </div>
+
+    <div class="footer-access">
+      Besoin d'accès ? <a href="#">Contacter l'administrateur</a> · <a href="#">Mot de passe oublié ?</a>
+    </div>
+  </div>
+
+  <div class="quick-preview">
+    <p>📁 ACCÈS RAPIDE · TOUS LES MODULES</p>
+    <div class="module-links">
+      <a href="pages/dashboard.html">Dashboard</a>
+      <a href="pages/pipeline.html">Pipeline</a>
+      <a href="pages/leads.html">Leads</a>
+      <a href="pages/cold-callers.html">Cold Callers</a>
+      <a href="pages/outreachers.html">Outreachers</a>
+      <a href="pages/freelancers.html">Freelancers</a>
+      <a href="pages/clients.html">Clients</a>
+      <a href="pages/tasks.html">Tâches</a>
+      <a href="pages/finance.html">Finance</a>
+      <a href="pages/analytics.html">Analytics</a>
+      <a href="pages/projects.html">Projets</a>
+      <a href="pages/reports.html">Rapports</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const roleBtns = document.querySelectorAll('.role-btn');
+  let currentRole = 'admin';
+
+  function setActiveRole(btn) {
+    roleBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRole = btn.getAttribute('data-role');
+  }
+
+  roleBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setActiveRole(btn);
+    });
+  });
+
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    if (!email || !password) {
+      alert("Veuillez saisir votre email et mot de passe.");
+      return;
+    }
+    if (currentRole === 'client') {
+      window.location.href = 'pages/clients.html';
+    } else {
+      window.location.href = 'pages/dashboard.html';
+    }
+  }
+
+  document.getElementById('signinBtn').addEventListener('click', handleLogin);
+  document.getElementById('loginEmail').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+  document.getElementById('loginPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.stat-number').forEach(el => {
+      const target = parseInt(el.innerText) || 0;
+      if (target > 0) {
+        let current = 0;
+        const interval = setInterval(() => {
+          if (current < target) {
+            current += Math.ceil(target / 30);
+            if (current > target) current = target;
+            el.innerText = current;
+          } else clearInterval(interval);
+        }, 30);
+      }
+    });
+  });
+</script>
+</body>
+</html>
