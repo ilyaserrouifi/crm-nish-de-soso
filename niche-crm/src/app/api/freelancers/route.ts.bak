@@ -16,9 +16,6 @@ export async function POST(req: Request) {
     const freelancer = await prisma.freelancer.create({
       data: {
         name: body.name,
-        username: body.username || body.name.toLowerCase().replace(/\s+/g, ''),
-        phone: body.phone || '',
-        role: body.role || 'freelancer',
         skills: body.skills || '',
         portfolioUrl: body.portfolioUrl || null,
         rate: parseFloat(body.rate) || 0,
