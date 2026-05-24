@@ -23,6 +23,7 @@
       --border-subtle: rgba(255, 255, 255, 0.07);
       --text-primary: #ededf2;
       --text-muted: rgba(237, 237, 242, 0.4);
+      --error-red: #ef4444;
       --transition: all 0.2s ease;
     }
 
@@ -210,7 +211,7 @@
       box-shadow: 0 0 0 3px rgba(43, 47, 255, 0.1);
     }
 
-    /* Role selector */
+    /* Role selector (visual only) */
     .role-label {
       font-size: 11px;
       font-weight: 500;
@@ -249,6 +250,19 @@
       color: var(--text-primary);
     }
 
+    /* Error message */
+    .error-msg {
+      color: var(--error-red);
+      font-size: 12px;
+      margin-bottom: 16px;
+      text-align: center;
+      min-height: 20px;
+      display: none;
+    }
+    .error-msg.visible {
+      display: block;
+    }
+
     /* Sign in button */
     .btn {
       width: 100%;
@@ -268,19 +282,24 @@
       justify-content: center;
       gap: 8px;
     }
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       background: var(--blue-hover);
       box-shadow: 0 0 44px var(--blue-glow);
       transform: translateY(-1px);
     }
-    .btn:active {
+    .btn:active:not(:disabled) {
       transform: translateY(0);
+    }
+    .btn:disabled {
+      background: rgba(43, 47, 255, 0.5);
+      cursor: not-allowed;
+      transform: none;
     }
     .arrow {
       font-size: 18px;
       transition: transform 0.2s;
     }
-    .btn:hover .arrow {
+    .btn:hover:not(:disabled) .arrow {
       transform: translateX(4px);
     }
 
@@ -296,41 +315,6 @@
       text-decoration: none;
     }
     .footer a:hover {
-      color: var(--text-primary);
-    }
-
-    /* Quick nav panel */
-    .quick-preview {
-      margin-top: 28px;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-    }
-    .quick-preview p {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .page-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .page-links a {
-      font-size: 11px;
-      padding: 5px 10px;
-      background: rgba(43, 47, 255, 0.1);
-      border: 1px solid rgba(43, 47, 255, 0.2);
-      border-radius: 6px;
-      color: rgba(120, 130, 255, 0.9);
-      text-decoration: none;
-      transition: all 0.15s;
-    }
-    .page-links a:hover {
-      background: rgba(43, 47, 255, 0.2);
       color: var(--text-primary);
     }
 
@@ -375,11 +359,11 @@
     <!-- Logo SVG + Niche text -->
     <div class="logo-section">
       <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
-        <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
-        <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
         <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
-        <path d="M22 42 L22 90 L33 90 L33 62 L48 90 L52 90 L52 42 L41 42 L41 68 L27 42 Z" fill="#0b0b0e"/>
+        <path d="M22 42L22 90L33 90L33 62L48 90L52 90L52 42L41 42L41 68L27 42Z" fill="#0b0b0e"/>
+        <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
+        <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
+        <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
       </svg>
       <div class="logo-text">
         <div class="name">Niche</div>
@@ -389,14 +373,14 @@
 
     <!-- 5 glassmorphism icons row -->
     <div class="icons-row">
-      <!-- Folder icon -->
+      <!-- Icon 1: Folder -->
       <div class="icon-pill">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path d="M3 7C3 5.89543 3.89543 5 5 5H10L12 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" fill="rgba(43,47,255,0.9)"/>
           <path d="M3 7C3 5.89543 3.89543 5 5 5H10L12 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" fill="rgba(130,150,255,0.35)"/>
         </svg>
       </div>
-      <!-- User + notification badge -->
+      <!-- Icon 2: Person + notification dot -->
       <div class="icon-pill">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="8" r="4" fill="rgba(43,47,255,0.9)"/>
@@ -404,7 +388,7 @@
           <circle cx="18" cy="6" r="3" fill="rgba(43,47,255,0.9)"/>
         </svg>
       </div>
-      <!-- Calendar "31" -->
+      <!-- Icon 3: Calendar with "31" -->
       <div class="icon-pill">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <rect x="3" y="5" width="18" height="16" rx="3" fill="rgba(130,150,255,0.35)"/>
@@ -414,7 +398,7 @@
           <line x1="16" y1="3" x2="16" y2="7" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
-      <!-- Bar chart -->
+      <!-- Icon 4: Bar chart (3 bars) -->
       <div class="icon-pill">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <rect x="3" y="14" width="4" height="7" rx="1.5" fill="rgba(130,150,255,0.5)"/>
@@ -422,7 +406,7 @@
           <rect x="17" y="5" width="4" height="16" rx="1.5" fill="rgba(43,47,255,0.6)"/>
         </svg>
       </div>
-      <!-- Lock -->
+      <!-- Icon 5: Padlock -->
       <div class="icon-pill">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <rect x="5" y="11" width="14" height="10" rx="3" fill="rgba(130,150,255,0.35)"/>
@@ -435,98 +419,148 @@
     <h1>Welcome back</h1>
     <p class="tagline">Sign in to your workspace</p>
 
-    <!-- Email field -->
+    <!-- Email field (empty) -->
     <div class="field">
       <label>EMAIL</label>
-      <input type="email" id="emailInput" placeholder="you@niche.com" value="demo@niche.com" />
+      <input type="email" id="emailInput" placeholder="you@example.com" />
     </div>
 
-    <!-- Password field -->
+    <!-- Password field (empty) -->
     <div class="field" style="margin-bottom: 22px;">
       <label>PASSWORD</label>
-      <input type="password" id="passwordInput" placeholder="••••••••" value="demo123" />
+      <input type="password" id="passwordInput" placeholder="••••••••" />
     </div>
 
-    <!-- Role selector -->
+    <!-- Role selector (visual only) -->
     <span class="role-label">LOGIN AS</span>
     <div class="roles">
-      <button class="role on" onclick="pickRole(this)">⚡ Admin</button>
-      <button class="role" onclick="pickRole(this)">🎯 Project Manager</button>
-      <button class="role" onclick="pickRole(this)">💼 Freelancer</button>
-      <button class="role" onclick="pickRole(this)">👤 Client</button>
+      <button type="button" class="role on" onclick="pickRole(this)">⚡ Admin</button>
+      <button type="button" class="role" onclick="pickRole(this)">🎯 Project Manager</button>
+      <button type="button" class="role" onclick="pickRole(this)">💼 Freelancer</button>
+      <button type="button" class="role" onclick="pickRole(this)">👤 Client</button>
     </div>
 
+    <!-- Error message container -->
+    <div id="errorMsg" class="error-msg"></div>
+
     <!-- Sign in button -->
-    <button class="btn" onclick="handleLogin()">
+    <button class="btn" id="loginBtn" onclick="handleLogin()">
       Sign in <span class="arrow">→</span>
     </button>
 
     <!-- Footer -->
     <p class="footer">Need access? <a href="#">Contact your admin</a></p>
   </div>
-
-  <!-- Quick navigation panel -->
-  <div class="quick-preview">
-    <p>All pages</p>
-    <div class="page-links">
-      <a href="pages/dashboard.html">Dashboard</a>
-      <a href="pages/leads.html">Pipeline / Leads</a>
-      <a href="pages/cold-callers.html">Cold Callers</a>
-      <a href="pages/outreachers.html">Outreachers</a>
-      <a href="pages/freelancers.html">Freelancers</a>
-      <a href="pages/clients.html">Clients</a>
-      <a href="pages/tasks.html">Tasks</a>
-      <a href="pages/finance.html">Finance</a>
-      <a href="pages/analytics.html">Analytics</a>
-    </div>
-  </div>
 </div>
 
 <script>
-  // Role selection handler
-  function pickRole(element) {
+  // Role selection handler (visual only — role comes from database)
+  function pickRole(el) {
     document.querySelectorAll('.role').forEach(btn => btn.classList.remove('on'));
-    element.classList.add('on');
+    el.classList.add('on');
   }
 
-  // Login handler with navigation based on role
-  function handleLogin() {
+  // Real login handler with API call
+  async function handleLogin() {
     const email = document.getElementById('emailInput').value.trim();
-    const password = document.getElementById('passwordInput').value.trim();
-    
-    // Simple validation
+    const password = document.getElementById('passwordInput').value;
+    const btn = document.getElementById('loginBtn');
+    const errorEl = document.getElementById('errorMsg');
+
+    // Reset error
+    errorEl.textContent = '';
+    errorEl.classList.remove('visible');
+
+    // Validation
     if (!email || !password) {
-      alert('Please enter your email and password');
+      errorEl.textContent = 'Please enter email and password';
+      errorEl.classList.add('visible');
       return;
     }
-    
-    // Get selected role text
-    const activeRole = document.querySelector('.role.on');
-    const roleText = activeRole.textContent.trim().toLowerCase();
-    
-    console.log(`Login attempt with role: ${roleText}`);
-    
-    // Navigate based on role
-    if (roleText.includes('client')) {
-      window.location.href = 'pages/clients.html';
-    } else if (roleText.includes('freelancer')) {
-      window.location.href = 'pages/freelancers.html';
-    } else {
-      window.location.href = 'pages/dashboard.html';
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errorEl.textContent = 'Please enter a valid email address';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    // Show loading state
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+
+    try {
+      // Real API call to backend
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle API error
+        errorEl.textContent = data.error || data.message || 'Invalid credentials. Please try again.';
+        errorEl.classList.add('visible');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        return;
+      }
+
+      // Success — save user to localStorage
+      localStorage.setItem('user', JSON.stringify(data));
+
+      // Redirect based on role from database
+      const role = data.role;
+      if (role === 'CLIENT') {
+        window.location.href = '/client';
+      } else if (role === 'FREELANCER') {
+        window.location.href = '/freelancer';
+      } else {
+        // ADMIN, PROJECT_MANAGER, or any other role
+        window.location.href = '/dashboard';
+      }
+
+    } catch (err) {
+      // Network or connection error
+      console.error('Login error:', err);
+      errorEl.textContent = 'Connection error. Please check your network and try again.';
+      errorEl.classList.add('visible');
+      btn.disabled = false;
+      btn.innerHTML = originalText;
     }
   }
 
   // Enter key support
-  document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+  const passwordInput = document.getElementById('passwordInput');
+  const emailInput = document.getElementById('emailInput');
+
+  passwordInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleLogin();
     }
   });
-  document.getElementById('emailInput').addEventListener('keypress', function(e) {
+
+  emailInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleLogin();
     }
   });
+
+  // Demo mode notice (only visible in console for developers)
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('🔐 Niche CRM Login — Ready for API integration');
+    console.log('Expected API endpoint: POST /api/auth/login');
+    console.log('Expected response: { id, name, email, role }');
+    console.log('Roles: ADMIN, PROJECT_MANAGER, FREELANCER, CLIENT');
+  }
 </script>
 </body>
-</html> 
+</html>
