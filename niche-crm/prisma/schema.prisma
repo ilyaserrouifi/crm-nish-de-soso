@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("FREELANCER")
+  createdAt DateTime @default(now())
+}
+
+model Lead {
+  id               String   @id @default(cuid())
+  companyName      String
+  contactName      String
+  source           String
+  niche            String
+  estimatedRevenue Float?
+  painNotes        String?
+  stage            String   @default("LEAD")
+  dealValue        Float?
+  assignedTo       String?
+  nextAction       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Caller {
+  id         String    @id @default(cuid())
+  name       String
+  username   String
+  phone      String
+  email      String
+  startDate  DateTime
+  salary     Float
+  salaryType String
+  niche      String
+  score      String    @default("B")
+  createdAt  DateTime  @default(now())
+  callLogs   CallLog[]
+}
+
+model CallLog {
+  id         String   @id @default(cuid())
+  callerId   String
+  caller     Caller   @relation(fields: [callerId], references: [id])
+  company    String
+  time       DateTime
+  duration   Int
+  outcome    String
+  painNoted  String?
+  nextAction String?
+  createdAt  DateTime @default(now())
+}
+
+model Outreacher {
+  id          String       @id @default(cuid())
+  name        String
+  username    String
+  phone       String
+  email       String
+  channel     String
+  salary      Float
+  score       String       @default("B")
+  createdAt   DateTime     @default(now())
+  messageLogs MessageLog[]
+}
+
+model MessageLog {
+  id           String     @id @default(cuid())
+  outreacherId String
+  outreacher   Outreacher @relation(fields: [outreacherId], references: [id])
+  company      String
+  channel      String
+  messageText  String
+  dateSent     DateTime
+  replied      Boolean    @default(false)
+  replyContent String?
+  nextStep     String?
+  createdAt    DateTime   @default(now())
+}
+
+model Freelancer {
+  id           String   @id @default(cuid())
+  name         String
+  username     String
+  phone        String
+  role         String
+  skills       String
+  portfolioUrl String?
+  rate         Float
+  rateType     String
+  timezone     String
+  available    Boolean  @default(true)
+  rating       Float    @default(5)
+  score        String   @default("B")
+  createdAt    DateTime @default(now())
+  tasks        Task[]
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  company   String
+  name      String
+  email     String
+  phone     String?
+  niche     String?
+  mrr       Float     @default(0)
+  status    String    @default("active")
+  createdAt DateTime  @default(now())
+  projects  Project[]
+  invoices  Invoice[]
+}
+
+model Project {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    Client    @relation(fields: [clientId], references: [id])
+  name      String
+  services  String
+  startDate DateTime
+  endDate   DateTime?
+  budget    Float
+  status    String    @default("ACTIVE")
+  createdAt DateTime  @default(now())
+  tasks     Task[]
+}
+
+model Task {
+  id              String     @id @default(cuid())
+  projectId       String
+  project         Project    @relation(fields: [projectId], references: [id])
+  freelancerId    String?
+  freelancer      Freelancer? @relation(fields: [freelancerId], references: [id])
+  name            String
+  priority        String     @default("MEDIUM")
+  status          String     @default("TODO")
+  deadline        DateTime?
+  visibleToClient Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Invoice {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    Client    @relation(fields: [clientId], references: [id])
+  amount    Float
+  service   String
+  recurring Boolean   @default(true)
+  status    String    @default("PENDING")
+  dueDate   DateTime
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  category  String
+  amount    Float
+  date      DateTime
+  vendor    String
+  recurring Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
