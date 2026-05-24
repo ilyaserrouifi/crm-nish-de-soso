@@ -170,3 +170,26 @@ model Expense {
   recurring Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model ColdCaller {
+  id                   String    @id @default(cuid())
+  name                 String
+  username             String
+  phone                String
+  email                String
+  startDate            DateTime?
+  niche                String?
+  salaryType           String    @default("fixed")
+  salaryBase           Float     @default(0)
+  commissionPerMeeting Float     @default(0)
+  bonusPerClose        Float     @default(0)
+  status               String    @default("active")
+  score                String    @default("D")
+  callsMade            Int       @default(0)
+  pickups              Int       @default(0)
+  meetingsBooked       Int       @default(0)
+  noShows              Int       @default(0)
+  closes               Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
