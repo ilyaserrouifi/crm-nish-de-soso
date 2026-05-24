@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd niche-crm && npm run build",
+  "outputDirectory": "niche-crm/.next",
+  "installCommand": "cd niche-crm && npm install",
+  "framework": "nextjs"
+}
