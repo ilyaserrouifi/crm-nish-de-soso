@@ -431,18 +431,24 @@
     c.innerHTML = alertsData.map(a=>`<div class="alert-row"><div class="alert-dot" style="background:${color[a.severity]||'#2b2fff'}"></div><span>${escapeHtml(a.message)}</span></div>`).join('');
   }
 
-  function renderAnalytics() {
+  async function fetchAnalytics() {
+    try { const r = await fetch('/api/analytics'); if(!r.ok) throw new Error(); return await r.json(); }
+    catch(e){ return { mrrGrowth:[0,0,0,0,0,0], callsPerDay:[0,0,0,0,0,0,0], conversionRate:0 }; }
+  }
+
+  async function renderAnalytics() {
+    const analyticsData = await fetchAnalytics(); {
     const totalCalls = (callersData||[]).reduce((s,c)=>s+(c.callsToday||0),0);
     const active = (callersData||[]).filter(c=>c.status==='active').length || 1;
     const avgCalls = Math.round(totalCalls/active);
     const totalLeads = statsData?.totalLeads || 1;
     const closedWon = (statsData?.stageStats||[]).find(s=>s.stage==='CLOSED_WON')?._count || 0;
-    const convRate = (closedWon/totalLeads*100);
+    const convRate = analyticsData.conversionRate;
     const mrr = financeData?.mrr || 0;
     document.getElementById('analyticsGrid').innerHTML = `
-      <div class="card analytics-card"><div class="card-title">📈 MRR GROWTH</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">this month</div><div class="bar-chart">${[22,42,24,46,34,20,40].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
-      <div class="card analytics-card"><div class="card-title">📞 CALLS / DAY</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">avg per caller</div><div class="bar-chart">${[18,35,28,42,30,22,38].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
-      <div class="card analytics-card"><div class="card-title">🎯 CONVERSION RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">leads → closed</div><div class="bar-chart">${[30,28,25,22,20,18,15].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
+      <div class="card analytics-card"><div class="card-title">📈 MRR GROWTH</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">this month</div><div class="bar-chart">${analyticsData.mrrGrowth.map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
+      <div class="card analytics-card"><div class="card-title">📞 CALLS / DAY</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">avg per caller</div><div class="bar-chart">${analyticsData.callsPerDay.map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
+      <div class="card analytics-card"><div class="card-title">🎯 CONVERSION RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">leads → closed</div><div class="bar-chart">${[analyticsData.conversionRate, analyticsData.conversionRate*0.9, analyticsData.conversionRate*0.8, analyticsData.conversionRate*0.7, analyticsData.conversionRate*0.6, analyticsData.conversionRate*0.5, analyticsData.conversionRate*0.4].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
     `;
   }
 
