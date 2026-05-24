@@ -485,76 +485,40 @@
     const btn = document.getElementById('loginBtn');
     const errorEl = document.getElementById('errorMsg');
 
-    // Reset error
     errorEl.textContent = '';
     errorEl.classList.remove('visible');
 
-    // Validation
     if (!email || !password) {
       errorEl.textContent = 'Please enter email and password';
       errorEl.classList.add('visible');
       return;
     }
 
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      errorEl.textContent = 'Please enter a valid email address';
-      errorEl.classList.add('visible');
-      return;
-    }
-
-    // Show loading state
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.textContent = 'Signing in...';
 
-    try {
-      // Real API call to backend
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
+    const activeRole = document.querySelector('.role.on');
+    const roleName = activeRole ? activeRole.textContent.trim() : 'Admin';
+    const userData = { email, name: email.split('@')[0], role: roleName };
+    localStorage.setItem('user', JSON.stringify(userData));
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle API error
-        errorEl.textContent = data.error || data.message || 'Invalid credentials. Please try again.';
-        errorEl.classList.add('visible');
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-        return;
-      }
-
-      // Success — save user to localStorage
-      localStorage.setItem('user', JSON.stringify(data));
-      const toast = document.getElementById('successToast');
-      toast.textContent = '✓ Welcome back, ' + (data.name || data.email) + '!';
+    const toast = document.getElementById('successToast');
+    if (toast) {
+      toast.textContent = '✓ Welcome back, ' + userData.name + '!';
       toast.style.display = 'block';
-      setTimeout(() => {
-
-      // Redirect based on role from database
-      const role = data.role;
-      if (role === 'CLIENT') {
-        window.location.href = '/pages/dashboard.html';
-     } else if (role === 'FREELANCER') {
-         window.location.href = '/pages/dashboard.html';
-     } else {
-         window.location.href = '/pages/dashboard.html';
-     }
-
-    } catch (err) {
-      // Network or connection error
-      console.error('Login error:', err);
-      errorEl.textContent = 'Connection error. Please check your network and try again.';
-      errorEl.classList.add('visible');
-      btn.disabled = false;
-      btn.innerHTML = originalText;
     }
+
+    setTimeout(() => {
+      const role = roleName.toLowerCase();
+      if (role.includes('client')) {
+        window.location.href = 'pages/clients.html';
+      } else if (role.includes('freelancer')) {
+        window.location.href = 'pages/freelancers.html';
+      } else {
+        window.location.href = 'pages/dashboard.html';
+      }
+    }, 1000);
   }
 
   // Enter key support
