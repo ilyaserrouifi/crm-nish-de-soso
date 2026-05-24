@@ -1,9 +1,9 @@
 {
-  "buildCommand": "cd niche-crm && npm run build",
-  "outputDirectory": "niche-crm/.next",
-  "installCommand": "cd niche-crm && npm install",
-  "framework": "nextjs",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/niche-crm/$1" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "niche-crm/package.json",
+      "use": "@vercel/next"
+    }
   ]
 }
