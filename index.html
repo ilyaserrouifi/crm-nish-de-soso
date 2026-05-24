@@ -608,6 +608,15 @@ function openRequestModal() { document.getElementById('requestModal').style.disp
 function closeRequestModal() { document.getElementById('requestModal').style.display='none'; document.getElementById('reqSuccess').style.display='none'; }
 function submitRequest() { document.getElementById('reqSuccess').style.display='block'; setTimeout(closeRequestModal, 2000); }
 </script>
+
+  <!-- Register Bar -->
+  <div style="max-width:440px;width:100%;margin:12px auto 0;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px 28px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;position:relative;z-index:10">
+    <div>
+      <div style="font-size:13px;color:rgba(237,237,242,0.5);font-family:'DM Sans',sans-serif">New to Niche?</div>
+      <div style="font-size:11px;color:rgba(237,237,242,0.3);margin-top:3px;font-family:'DM Sans',sans-serif">Request access from your administrator</div>
+    </div>
+    <button onclick="openRequestModal()" style="background:transparent;border:1px solid rgba(43,47,255,0.4);border-radius:8px;padding:8px 14px;color:rgba(120,130,255,0.9);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">Request Access →</button>
+  </div>
 </body>
 </html>
 <style>
