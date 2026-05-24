@@ -3,724 +3,530 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Niche CRM - Plateforme de gestion complète pour entreprises" />
+  <meta name="description" content="Niche CRM - Plateforme de gestion complète pour entreprises modernes" />
   <meta name="author" content="Niche CRM" />
-  <title>Niche CRM — Connexion & Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>Niche CRM — Connexion</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet" />
   <style>
-    /* ============================================ */
-    /* DESIGN SYSTEM - CSS VARIABLES                */
-    /* ============================================ */
-    :root {
-      --bg-deep: #0a0a0f;
-      --bg-sidebar: #0d0d1a;
-      --bg-card: #13131f;
-      --bg-hover: #1a1a2e;
-      --bg-ghost: #1a1a2e;
-      --border-subtle: #1a1a2e;
-      --blue-primary: #2233FF;
-      --blue-secondary: #8899FF;
-      --blue-pale: #C8CFFF;
-      --text-white: #ffffff;
-      --text-muted: #444466;
-      --text-placeholder: #444466;
-      --transition: all 0.2s ease;
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    :root {
+      --bg-deep: #0b0b0e;
+      --blue-primary: #2b2fff;
+      --blue-hover: #4f5aff;
+      --blue-glow: rgba(43, 47, 255, 0.35);
+      --surface-card: rgba(255, 255, 255, 0.04);
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --text-primary: #ededf2;
+      --text-muted: rgba(237, 237, 242, 0.4);
+      --transition: all 0.2s ease;
+    }
+
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg-deep);
-      color: var(--text-white);
-      overflow: hidden;
-    }
-
-    /* ============================================ */
-    /* LOGIN SCREEN                                 */
-    /* ============================================ */
-    #login-screen {
-      position: fixed;
-      inset: 0;
+      color: var(--text-primary);
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 200;
-      background: var(--bg-deep);
-      transition: opacity 0.3s ease;
+      position: relative;
+      padding: 1.5rem;
     }
-    .blob-1, .blob-2 {
+
+    /* Dot grid pattern */
+    body::before {
+      content: '';
       position: fixed;
-      border-radius: 50%;
-      filter: blur(150px);
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 30px 30px;
       pointer-events: none;
       z-index: 0;
     }
-    .blob-1 { width: 500px; height: 500px; background: var(--blue-primary); opacity: 0.05; top: -150px; left: -150px; }
-    .blob-2 { width: 400px; height: 400px; background: var(--blue-secondary); opacity: 0.04; bottom: -100px; right: -100px; }
-    .login-card {
-      width: 440px;
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 52px;
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 0 100px rgba(34, 51, 255, 0.06);
-      position: relative;
-      z-index: 1;
-    }
-    .logo-center {
-      text-align: center;
-    }
-    .logo-ni {
-      font-family: 'Playfair Display', serif;
-      font-weight: 900;
-      font-style: italic;
-      font-size: 72px;
-      color: var(--text-white);
-      letter-spacing: -5px;
-      position: relative;
-      display: inline-block;
-    }
-    .logo-dot-login {
-      width: 14px;
-      height: 14px;
-      background: #3322CC;
-      border-radius: 50%;
-      position: absolute;
-      top: 8px;
-      right: -8px;
-    }
-    .logo-divider-login {
-      display: inline-block;
-      width: 1.5px;
-      height: 48px;
-      background: rgba(255,255,255,0.25);
-      margin: 0 14px;
-      vertical-align: middle;
-    }
-    .logo-che-login {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 400;
-      font-size: 24px;
-      color: var(--text-white);
-      vertical-align: middle;
-    }
-    .tagline {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 8px;
-    }
-    .divider {
-      height: 1px;
-      background: var(--border-subtle);
-      margin: 28px 0;
-    }
-    .role-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--blue-secondary);
-      margin-bottom: 12px;
-    }
-    .role-pills {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .role-pill {
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-deep);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 13px;
-    }
-    .role-pill.active {
-      background: var(--blue-primary);
-      color: var(--text-white);
-      border-color: var(--blue-primary);
-    }
-    .input-group {
-      margin-bottom: 20px;
-    }
-    .input-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--blue-secondary);
-      margin-bottom: 8px;
-      display: block;
-    }
-    .input-wrapper {
-      position: relative;
-    }
-    .input-field {
-      width: 100%;
-      background: var(--bg-deep);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 14px 16px;
-      color: var(--text-white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      transition: var(--transition);
-      outline: none;
-    }
-    .input-field:focus {
-      border-color: var(--blue-primary);
-      box-shadow: 0 0 0 3px rgba(34, 51, 255, 0.12);
-    }
-    .input-field.error {
-      border-color: #ef4444;
-      animation: shake 0.3s ease;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-    .eye-icon {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: var(--transition);
-    }
-    .eye-icon:hover { color: var(--blue-secondary); }
-    .row-between {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 16px 0 24px;
-    }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .checkbox input { accent-color: var(--blue-primary); width: 16px; height: 16px; }
-    .forgot-link { color: var(--blue-secondary); text-decoration: none; font-size: 13px; }
-    .forgot-link:hover { color: var(--text-white); }
-    .signin-btn {
-      width: 100%;
-      height: 54px;
-      background: var(--blue-primary);
-      border: none;
-      border-radius: 14px;
-      color: var(--text-white);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 500;
-      font-size: 15px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .signin-btn:hover { background: #3344FF; }
-    .signin-btn:active { transform: scale(0.98); }
-    .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .or-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 24px 0;
-      color: var(--text-muted);
-      font-size: 12px;
-    }
-    .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
-    .google-btn {
-      width: 100%;
-      height: 48px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: var(--transition);
-      color: var(--blue-secondary);
-    }
-    .google-btn:hover { border-color: var(--blue-primary); }
-    .footer-text { text-align: center; margin-top: 24px; font-size: 13px; color: var(--text-muted); }
-    .footer-text a { color: var(--blue-primary); text-decoration: none; }
 
-    /* ============================================ */
-    /* APP SHELL                                    */
-    /* ============================================ */
-    #app-shell {
-      display: none;
-      height: 100vh;
-      overflow: hidden;
-    }
-    /* Sidebar */
-    .sidebar {
-      width: 240px;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: width 0.3s ease;
-      flex-shrink: 0;
-    }
-    .sidebar.collapsed { width: 64px; }
-    .sidebar.collapsed .nav-text,
-    .sidebar.collapsed .sidebar-user-info,
-    .sidebar.collapsed .nav-badge,
-    .sidebar.collapsed .logo-che-small,
-    .sidebar.collapsed .logo-divider-small { display: none; }
-    .sidebar.collapsed .logo-small { text-align: center; }
-    .sidebar.collapsed .nav-item { justify-content: center; padding: 10px 0; }
-    .sidebar.collapsed .nav-icon { margin: 0; }
-    .collapse-btn {
-      position: absolute;
-      right: -12px;
-      top: 80px;
-      width: 24px;
-      height: 24px;
-      background: var(--bg-hover);
+    /* Blur blobs */
+    .blob {
+      position: fixed;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10;
-      border: 1px solid var(--border-subtle);
-      font-size: 10px;
-    }
-    .logo-small {
-      padding: 24px 16px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .logo-ni-small {
-      font-family: 'Playfair Display', serif;
-      font-weight: 900;
-      font-style: italic;
-      font-size: 52px;
-      color: var(--text-white);
-      position: relative;
-      letter-spacing: -3px;
-    }
-    .logo-dot-small {
-      width: 10px;
-      height: 10px;
-      background: var(--blue-primary);
-      border-radius: 50%;
-      position: absolute;
-      top: 6px;
-      right: -6px;
-    }
-    .logo-divider-small {
-      display: inline-block;
-      width: 1px;
-      height: 36px;
-      background: rgba(255,255,255,0.25);
-      margin: 0 8px;
-      vertical-align: middle;
-    }
-    .logo-che-small {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 400;
-      font-size: 18px;
-      color: var(--text-white);
-      vertical-align: middle;
-    }
-    .user-pill {
-      margin: 20px 16px;
-      padding: 12px;
-      background: rgba(34, 51, 255, 0.1);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .user-avatar-small {
-      width: 32px;
-      height: 32px;
-      background: rgba(34, 51, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--blue-primary);
-    }
-    .nav-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      padding: 24px 16px 8px 16px;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
-      margin: 2px 8px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-    }
-    .nav-item:hover { background: var(--bg-hover); border-left: 3px solid var(--blue-primary); padding-left: 13px; }
-    .nav-item.active { background: rgba(34, 51, 255, 0.08); border-left: 3px solid var(--blue-primary); }
-    .nav-icon {
-      position: relative;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .icon-glow {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      background: var(--blue-secondary);
-      border-radius: 50%;
-      filter: blur(8px);
-      opacity: 0.5;
+      filter: blur(100px);
       pointer-events: none;
+      z-index: 0;
     }
-    .nav-svg {
-      position: relative;
-      z-index: 1;
-      width: 20px;
-      height: 20px;
+    .blob-1 {
+      width: 520px;
+      height: 520px;
+      background: rgba(43, 47, 255, 0.13);
+      top: -140px;
+      left: -140px;
     }
-    .nav-text { flex: 1; font-size: 13px; color: var(--text-muted); }
-    .nav-badge { background: var(--blue-primary); border-radius: 20px; padding: 2px 8px; font-size: 10px; color: white; }
-    .sidebar-footer-nav {
-      margin-top: auto;
-      padding: 16px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .blob-2 {
+      width: 380px;
+      height: 380px;
+      background: rgba(43, 47, 255, 0.08);
+      bottom: -80px;
+      right: -80px;
     }
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .topbar {
-      height: 64px;
-      background: var(--bg-deep);
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .current-title { font-size: 18px; font-weight: 500; }
-    .topbar-right { display: flex; align-items: center; gap: 16px; }
-    .search-wrapper { position: relative; }
-    .search-wrapper input {
-      width: 200px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 8px 16px 8px 36px;
-      color: var(--text-white);
-      font-size: 13px;
-      transition: width 0.2s ease;
-    }
-    .search-wrapper input:focus { width: 280px; outline: none; border-color: var(--blue-primary); }
-    .search-wrapper input::placeholder { color: var(--text-muted); }
-    .search-icon {
-      position: absolute;
-      left: 12px;
+    .blob-3 {
+      width: 220px;
+      height: 220px;
+      background: rgba(43, 47, 255, 0.07);
       top: 50%;
-      transform: translateY(-50%);
+      left: 55%;
+      transform: translate(-50%, -50%);
     }
-    .notif-btn {
+
+    /* Main container */
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    /* Login card glassmorphism */
+    .login-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 48px 40px;
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      box-shadow: 0 0 90px rgba(43, 47, 255, 0.07), 0 48px 96px rgba(0, 0, 0, 0.55);
+      animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Logo section */
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .logo-svg {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+    }
+    .logo-text .name {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+    .logo-text .sub {
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* 5 glassmorphism icons row */
+    .icons-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 36px;
+      padding: 12px 14px;
+      background: rgba(43, 47, 255, 0.06);
+      border: 1px solid rgba(43, 47, 255, 0.12);
+      border-radius: 12px;
+    }
+    .icon-pill {
       width: 40px;
       height: 40px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 50%;
+      border-radius: 10px;
+      background: rgba(43, 47, 255, 0.18);
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      position: relative;
+      flex-shrink: 0;
+      transition: var(--transition);
     }
-    .notif-badge {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 8px;
-      height: 8px;
-      background: var(--blue-primary);
-      border-radius: 50%;
+    .icon-pill:hover {
+      transform: translateY(-2px);
+      background: rgba(43, 47, 255, 0.28);
     }
-    .topbar-avatar {
-      width: 36px;
-      height: 36px;
-      background: rgba(34, 51, 255, 0.12);
-      border: 1px solid var(--blue-primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    /* Typography */
+    h1 {
+      font-size: 27px;
+      font-weight: 600;
+      letter-spacing: -0.6px;
+      margin-bottom: 5px;
+    }
+    .tagline {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin-bottom: 32px;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
       font-weight: 500;
-      color: var(--blue-primary);
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
-    .sections-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
+    input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.042);
+      border: 1px solid var(--border-subtle);
+      border-radius: 11px;
+      padding: 12px 15px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .section { display: none; animation: fadeIn 0.15s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .section.active { display: block; }
-    /* Cards & Grids */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
-    .stat-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; transition: var(--transition); cursor: pointer; }
-    .stat-card:hover { transform: scale(1.02); background: var(--bg-hover); }
-    .stat-icon-sm { margin-bottom: 16px; font-size: 24px; }
-    .stat-value { font-size: 32px; font-weight: 500; margin: 8px 0 4px; }
-    .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--blue-secondary); }
-    .stat-trend { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
-    .row-2cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
-    .card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px; }
-    .card-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--blue-secondary); margin-bottom: 16px; }
-    .empty-chart { border: 1px dashed var(--border-subtle); border-radius: 12px; min-height: 180px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; }
-    .task-row { padding: 12px 0; border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); }
-    .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th { text-align: left; padding: 12px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--blue-secondary); border-bottom: 1px solid var(--border-subtle); }
-    .data-table td { padding: 12px 8px; color: var(--text-muted); border-bottom: 1px solid var(--border-subtle); }
-    .kanban-scroll { overflow-x: auto; display: flex; gap: 16px; padding-bottom: 16px; }
-    .kanban-col { min-width: 260px; background: var(--bg-card); border-radius: 12px; padding: 12px; }
-    .kanban-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 600; }
-    .kanban-card { background: var(--bg-hover); border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: var(--transition); }
-    .kanban-card:hover { box-shadow: 0 4px 20px rgba(34, 51, 255, 0.12); transform: translateY(-2px); }
-    @media (max-width: 768px) { .sidebar { width: 64px; } .sidebar .nav-text { display: none; } .stats-row { grid-template-columns: 1fr; } .row-2cols { grid-template-columns: 1fr; } }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.17);
+    }
+    input:focus {
+      border-color: rgba(43, 47, 255, 0.55);
+      box-shadow: 0 0 0 3px rgba(43, 47, 255, 0.1);
+    }
+
+    /* Role selector */
+    .role-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+      margin-top: 8px;
+    }
+    .roles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-bottom: 28px;
+    }
+    .role {
+      padding: 10px 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.17s;
+      text-align: center;
+    }
+    .role:hover {
+      border-color: rgba(43, 47, 255, 0.4);
+      color: var(--text-primary);
+    }
+    .role.on {
+      background: rgba(43, 47, 255, 0.15);
+      border-color: var(--blue-primary);
+      color: var(--text-primary);
+    }
+
+    /* Sign in button */
+    .btn {
+      width: 100%;
+      padding: 13.5px;
+      background: var(--blue-primary);
+      border: none;
+      border-radius: 11px;
+      color: var(--text-primary);
+      font-size: 14.5px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px var(--blue-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:hover {
+      background: var(--blue-hover);
+      box-shadow: 0 0 44px var(--blue-glow);
+      transform: translateY(-1px);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    .arrow {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .btn:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 20px;
+    }
+    .footer a {
+      color: rgba(120, 130, 255, 0.85);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Quick nav panel */
+    .quick-preview {
+      margin-top: 28px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+    }
+    .quick-preview p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .page-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .page-links a {
+      font-size: 11px;
+      padding: 5px 10px;
+      background: rgba(43, 47, 255, 0.1);
+      border: 1px solid rgba(43, 47, 255, 0.2);
+      border-radius: 6px;
+      color: rgba(120, 130, 255, 0.9);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .page-links a:hover {
+      background: rgba(43, 47, 255, 0.2);
+      color: var(--text-primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .login-card {
+        padding: 32px 24px;
+      }
+      .icons-row {
+        gap: 6px;
+      }
+      .icon-pill {
+        width: 36px;
+        height: 36px;
+      }
+      .icon-pill svg {
+        width: 18px;
+        height: 18px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .roles {
+        gap: 5px;
+      }
+      .role {
+        padding: 8px 4px;
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="blob-1"></div>
-  <div class="blob-2"></div>
-  <div class="login-card">
-    <div class="logo-center">
-      <span class="logo-ni">ni<span class="logo-dot-login"></span></span>
-      <span class="logo-divider-login"></span>
-      <span class="logo-che-login">che</span>
-    </div>
-    <div class="tagline">Consultation CRM</div>
-    <div class="divider"></div>
-    <div class="role-label">Sign in as</div>
-    <div class="role-pills" id="rolePills">
-      <div class="role-pill active" data-role="admin">Admin</div>
-      <div class="role-pill" data-role="manager">Manager</div>
-      <div class="role-pill" data-role="caller">Caller</div>
-      <div class="role-pill" data-role="client">Client</div>
-    </div>
-    <div class="input-group">
-      <div class="input-label">EMAIL</div>
-      <input type="email" id="loginEmail" class="input-field" placeholder="admin@niche.com" value="admin@niche.com">
-    </div>
-    <div class="input-group">
-      <div class="input-label">PASSWORD</div>
-      <div class="input-wrapper">
-        <input type="password" id="loginPassword" class="input-field" placeholder="••••••••" value="password">
-        <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" onclick="togglePassword()"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#444466"/><circle cx="12" cy="12" r="2" fill="#444466"/></svg>
-      </div>
-    </div>
-    <div class="row-between">
-      <label class="checkbox"><input type="checkbox"> Remember me</label>
-      <a href="#" class="forgot-link">Forgot password?</a>
-    </div>
-    <button class="signin-btn" id="signinBtn">Sign In <span class="spinner"></span></button>
-    <div class="or-divider">or</div>
-    <button class="google-btn" onclick="alert('Google login simulation')"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#428F5E"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continue with Google</button>
-    <div class="footer-text">No account? <a href="#">Contact admin</a></div>
-  </div>
-</div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
-<!-- APP SHELL -->
-<div id="app-shell">
-  <div class="sidebar" id="sidebar">
-    <div class="collapse-btn" id="collapseBtn">◀</div>
-    <div class="logo-small"><span class="logo-ni-small">ni<span class="logo-dot-small"></span></span><span class="logo-divider-small"></span><span class="logo-che-small">che</span></div>
-    <div class="user-pill"><div class="user-avatar-small" id="sidebarAvatar">AD</div><div class="sidebar-user-info"><div style="font-size:13px" id="sidebarName">Admin User</div><div style="font-size:10px;color:#8899FF" id="sidebarRole">Admin</div></div></div>
-    <div class="nav-label">MAIN</div>
-    <div class="nav-item" data-section="dashboard"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#2233FF"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#8899FF" opacity="0.7"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#C8CFFF" opacity="0.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#8899FF" opacity="0.3"/></svg></div><span class="nav-text">Dashboard</span></div>
-    <div class="nav-item" data-section="callers"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.12.45 2.33.69 3.57.69a1 1 0 011 1V20a1 1 0 01-1 1C10.56 21 3 13.44 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.24 2.45.69 3.57a1 1 0 01-.22 1.11l-2.2 2.11z" fill="#2233FF"/><circle cx="18" cy="6" r="3" fill="#8899FF"/></svg></div><span class="nav-text">Cold Callers</span></div>
-    <div class="nav-item" data-section="outreachers"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><path d="M2 8l10 6 10-6-10-6-10 6z" fill="#C8CFFF"/><path d="M2 8v10a2 2 0 002 2h16a2 2 0 002-2V8l-10 6-10-6z" fill="#2233FF"/></svg></div><span class="nav-text">Outreachers</span></div>
-    <div class="nav-item" data-section="freelancers"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="#C8CFFF"/><path d="M4 20c0-3.31 3.58-6 8-6s8 2.69 8 6" fill="#8899FF"/><path d="M18 4l2 2-2 2" stroke="#2233FF" stroke-width="2" fill="none"/></svg></div><span class="nav-text">Freelancers</span></div>
-    <div class="nav-item" data-section="pipeline"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="4" height="18" rx="1" fill="#2233FF"/><rect x="10" y="7" width="4" height="14" rx="1" fill="#8899FF"/><rect x="17" y="11" width="4" height="10" rx="1" fill="#C8CFFF"/></svg></div><span class="nav-text">Pipeline</span></div>
-    <div class="nav-item" data-section="clients"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" fill="#C8CFFF"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" fill="#2233FF"/></svg></div><span class="nav-text">Clients</span></div>
-    <div class="nav-item" data-section="projects"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="#C8CFFF"/><rect x="3" y="5" width="8" height="4" fill="#2233FF"/></svg></div><span class="nav-text">Projects</span></div>
-    <div class="nav-item" data-section="finance"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#C8CFFF" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#2233FF"/></svg></div><span class="nav-text">Finance</span></div>
-    <div class="nav-item" data-section="analytics"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><rect x="4" y="14" width="4" height="7" rx="1" fill="#C8CFFF"/><rect x="10" y="9" width="4" height="12" rx="1" fill="#8899FF"/><rect x="16" y="4" width="4" height="17" rx="1" fill="#2233FF"/></svg></div><span class="nav-text">Analytics</span></div>
-    <div class="nav-item" data-section="staffing"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3" fill="#C8CFFF"/><circle cx="16" cy="8" r="3" fill="#8899FF"/><path d="M2 20c0-3.31 3.13-6 7-6s7 2.69 7 6" fill="#2233FF"/></svg></div><span class="nav-text">Staffing</span></div>
-    <div class="nav-label">SETTINGS</div>
-    <div class="nav-item" data-section="settings"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="#8899FF"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="#8899FF" stroke-width="2"/></svg></div><span class="nav-text">Settings</span></div>
-    <div class="nav-item" data-section="help"><div class="nav-icon"><div class="icon-glow"></div><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#8899FF" opacity="0.5"/><path d="M12 16h.01M12 8v5" stroke="#2233FF" stroke-width="2"/></svg></div><span class="nav-text">Help</span></div>
-    <div class="sidebar-footer-nav"><div class="user-avatar-small">AD</div><div><div style="font-size:12px">Admin User</div><div style="font-size:10px;color:#444466">admin@niche.com</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-left:auto;cursor:pointer" onclick="logout()"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l4-4-4-4M12 13h12" stroke="#444466" stroke-width="2"/></svg></div>
-  </div>
-  <div class="main-content">
-    <div class="topbar"><div class="current-title" id="currentTitle">Dashboard</div><div class="topbar-right"><div class="search-wrapper"><svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="10" cy="10" r="7" stroke="#8899FF" stroke-width="2"/><path d="M15 15l6 6" stroke="#8899FF" stroke-width="2"/></svg><input type="text" placeholder="Search..."></div><div class="notif-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 00-3 3v2.5a7 7 0 00-4 6.5h14a7 7 0 00-4-6.5V5a3 3 0 00-3-3z" fill="#8899FF" opacity="0.6"/><path d="M9 18v1a3 3 0 006 0v-1" stroke="#8899FF" stroke-width="2"/></svg><div class="notif-badge"></div></div><div class="topbar-avatar">AD</div></div></div>
-    <div class="sections-container" id="sectionsContainer">
-      <!-- Dashboard Section -->
-      <div id="section-dashboard" class="section active">
-        <div class="stats-row"><div class="stat-card"><div class="stat-icon-sm">📞</div><div class="stat-value">—</div><div class="stat-label">Total Calls</div><div class="stat-trend">+0%</div></div><div class="stat-card"><div class="stat-icon-sm">📅</div><div class="stat-value">—</div><div class="stat-label">Meetings Booked</div><div class="stat-trend">+0%</div></div><div class="stat-card"><div class="stat-icon-sm">🏆</div><div class="stat-value">—</div><div class="stat-label">Deals Closed</div><div class="stat-trend">+0%</div></div><div class="stat-card"><div class="stat-icon-sm">💰</div><div class="stat-value">$—</div><div class="stat-label">MRR</div><div class="stat-trend">+0%</div></div></div>
-        <div class="row-2cols"><div class="card"><div class="card-title">Pipeline Overview</div><div class="empty-chart">📊 Graphique à venir</div></div><div class="card"><div class="card-title">Today's Tasks</div><div class="task-row">• Task 1 — À faire</div><div class="task-row">• Task 2 — En cours</div><div class="task-row">• Task 3 — À valider</div></div></div>
-        <div class="row-2cols"><div class="card"><div class="card-title">Team Leaderboard</div><table class="data-table"><tr><th>Rank</th><th>Name</th><th>Calls</th><th>Revenue</th></tr><tr><td>1</td><td>—</td><td>—</td><td>$—</td></tr><tr><td>2</td><td>—</td><td>—</td><td>$—</td></tr><tr><td>3</td><td>—</td><td>—</td><td>$—</td></tr></table></div><div class="card"><div class="card-title">Finance Snapshot</div><div class="task-row">MRR: $—</div><div class="task-row">Expenses: $—</div><div class="task-row">Net Profit: $—</div></div></div>
+<div class="container">
+  <div class="login-card">
+
+    <!-- Logo SVG + Niche text -->
+    <div class="logo-section">
+      <svg class="logo-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
+        <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
+        <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
+        <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
+        <path d="M22 42 L22 90 L33 90 L33 62 L48 90 L52 90 L52 42 L41 42 L41 68 L27 42 Z" fill="#0b0b0e"/>
+      </svg>
+      <div class="logo-text">
+        <div class="name">Niche</div>
+        <div class="sub">CRM Platform</div>
       </div>
-      <!-- Autres sections (structure similaire) -->
-      <div id="section-callers" class="section"><div class="card"><div class="card-title">Cold Callers</div><div class="empty-chart">👥 Liste des callers à venir</div></div></div>
-      <div id="section-outreachers" class="section"><div class="card"><div class="card-title">Outreachers</div><div class="empty-chart">📧 Campagnes d'outreach à venir</div></div></div>
-      <div id="section-freelancers" class="section"><div class="card"><div class="card-title">Freelancers</div><div class="empty-chart">👨‍💻 Équipe freelance à venir</div></div></div>
-      <div id="section-pipeline" class="section"><div class="card"><div class="card-title">Pipeline Kanban</div><div class="kanban-scroll"><div class="kanban-col"><div class="kanban-header">Lead <span>0</span></div><div class="kanban-card">—</div></div><div class="kanban-col"><div class="kanban-header">Contacted <span>0</span></div><div class="kanban-card">—</div></div><div class="kanban-col"><div class="kanban-header">Meeting <span>0</span></div><div class="kanban-card">—</div></div></div></div></div>
-      <div id="section-clients" class="section"><div class="card"><div class="card-title">Clients</div><div class="empty-chart">🏢 Portail client à venir</div></div></div>
-      <div id="section-projects" class="section"><div class="card"><div class="card-title">Projects</div><div class="empty-chart">📋 Gestion de projets à venir</div></div></div>
-      <div id="section-finance" class="section"><div class="card"><div class="card-title">Finance</div><div class="empty-chart">💰 Tableau financier à venir</div></div></div>
-      <div id="section-analytics" class="section"><div class="card"><div class="card-title">Analytics</div><div class="empty-chart">📊 Graphiques analytics à venir</div></div></div>
-      <div id="section-staffing" class="section"><div class="card"><div class="card-title">Staffing</div><div class="empty-chart">🎯 Marketplace talent à venir</div></div></div>
-      <div id="section-settings" class="section"><div class="card"><div class="card-title">Settings</div><div class="empty-chart">⚙️ Paramètres à venir</div></div></div>
-      <div id="section-help" class="section"><div class="card"><div class="card-title">Help</div><div class="empty-chart">❓ Support & FAQ à venir</div></div></div>
+    </div>
+
+    <!-- 5 glassmorphism icons row -->
+    <div class="icons-row">
+      <!-- Folder icon -->
+      <div class="icon-pill">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 7C3 5.89543 3.89543 5 5 5H10L12 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" fill="rgba(43,47,255,0.9)"/>
+          <path d="M3 7C3 5.89543 3.89543 5 5 5H10L12 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" fill="rgba(130,150,255,0.35)"/>
+        </svg>
+      </div>
+      <!-- User + notification badge -->
+      <div class="icon-pill">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" fill="rgba(43,47,255,0.9)"/>
+          <path d="M4 20C4 17 7.58 15 12 15C16.42 15 20 17 20 20" stroke="rgba(130,150,255,0.7)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="18" cy="6" r="3" fill="rgba(43,47,255,0.9)"/>
+        </svg>
+      </div>
+      <!-- Calendar "31" -->
+      <div class="icon-pill">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="16" rx="3" fill="rgba(130,150,255,0.35)"/>
+          <rect x="3" y="5" width="18" height="7" rx="3" fill="rgba(43,47,255,0.9)"/>
+          <text x="12" y="18" font-size="8" font-weight="700" fill="rgba(43,47,255,0.9)" text-anchor="middle" font-family="sans-serif">31</text>
+          <line x1="8" y1="3" x2="8" y2="7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="16" y1="3" x2="16" y2="7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <!-- Bar chart -->
+      <div class="icon-pill">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="14" width="4" height="7" rx="1.5" fill="rgba(130,150,255,0.5)"/>
+          <rect x="10" y="9" width="4" height="12" rx="1.5" fill="rgba(43,47,255,0.9)"/>
+          <rect x="17" y="5" width="4" height="16" rx="1.5" fill="rgba(43,47,255,0.6)"/>
+        </svg>
+      </div>
+      <!-- Lock -->
+      <div class="icon-pill">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="5" y="11" width="14" height="10" rx="3" fill="rgba(130,150,255,0.35)"/>
+          <path d="M8 11V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V11" stroke="rgba(43,47,255,0.9)" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="12" cy="16" r="1.5" fill="rgba(43,47,255,0.9)"/>
+        </svg>
+      </div>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="tagline">Sign in to your workspace</p>
+
+    <!-- Email field -->
+    <div class="field">
+      <label>EMAIL</label>
+      <input type="email" id="emailInput" placeholder="you@niche.com" value="demo@niche.com" />
+    </div>
+
+    <!-- Password field -->
+    <div class="field" style="margin-bottom: 22px;">
+      <label>PASSWORD</label>
+      <input type="password" id="passwordInput" placeholder="••••••••" value="demo123" />
+    </div>
+
+    <!-- Role selector -->
+    <span class="role-label">LOGIN AS</span>
+    <div class="roles">
+      <button class="role on" onclick="pickRole(this)">⚡ Admin</button>
+      <button class="role" onclick="pickRole(this)">🎯 Project Manager</button>
+      <button class="role" onclick="pickRole(this)">💼 Freelancer</button>
+      <button class="role" onclick="pickRole(this)">👤 Client</button>
+    </div>
+
+    <!-- Sign in button -->
+    <button class="btn" onclick="handleLogin()">
+      Sign in <span class="arrow">→</span>
+    </button>
+
+    <!-- Footer -->
+    <p class="footer">Need access? <a href="#">Contact your admin</a></p>
+  </div>
+
+  <!-- Quick navigation panel -->
+  <div class="quick-preview">
+    <p>All pages</p>
+    <div class="page-links">
+      <a href="pages/dashboard.html">Dashboard</a>
+      <a href="pages/leads.html">Pipeline / Leads</a>
+      <a href="pages/cold-callers.html">Cold Callers</a>
+      <a href="pages/outreachers.html">Outreachers</a>
+      <a href="pages/freelancers.html">Freelancers</a>
+      <a href="pages/clients.html">Clients</a>
+      <a href="pages/tasks.html">Tasks</a>
+      <a href="pages/finance.html">Finance</a>
+      <a href="pages/analytics.html">Analytics</a>
     </div>
   </div>
 </div>
 
 <script>
-  // ============================================
-  // LOGIC LOGIN & APP
-  // ============================================
-  let currentRole = "admin";
-  
-  // Role selection
-  document.querySelectorAll('.role-pill').forEach(pill => {
-    pill.addEventListener('click', function() {
-      document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
-      this.classList.add('active');
-      currentRole = this.dataset.role;
-    });
-  });
-  
-  // Toggle password visibility
-  function togglePassword() {
-    let pwd = document.getElementById('loginPassword');
-    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+  // Role selection handler
+  function pickRole(element) {
+    document.querySelectorAll('.role').forEach(btn => btn.classList.remove('on'));
+    element.classList.add('on');
   }
-  window.togglePassword = togglePassword;
-  
-  // Validation + connexion
-  document.getElementById('signinBtn').addEventListener('click', function() {
-    let email = document.getElementById('loginEmail');
-    let pwd = document.getElementById('loginPassword');
-    let hasError = false;
+
+  // Login handler with navigation based on role
+  function handleLogin() {
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
     
-    if (!email.value.trim()) {
-      email.classList.add('error');
-      hasError = true;
-      setTimeout(() => email.classList.remove('error'), 500);
-    }
-    if (!pwd.value.trim()) {
-      pwd.classList.add('error');
-      hasError = true;
-      setTimeout(() => pwd.classList.remove('error'), 500);
-    }
-    
-    if (hasError) {
-      alert("Veuillez remplir tous les champs");
+    // Simple validation
+    if (!email || !password) {
+      alert('Please enter your email and password');
       return;
     }
     
-    let btn = this;
-    let spinner = btn.querySelector('.spinner');
-    spinner.style.display = 'inline-block';
-    btn.disabled = true;
+    // Get selected role text
+    const activeRole = document.querySelector('.role.on');
+    const roleText = activeRole.textContent.trim().toLowerCase();
     
-    setTimeout(() => {
-      spinner.style.display = 'none';
-      btn.disabled = false;
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app-shell').style.display = 'flex';
-      
-      // Update sidebar user info based on role
-      let roleName = { admin: 'Admin', manager: 'Manager', caller: 'Caller', client: 'Client' };
-      document.getElementById('sidebarRole').innerText = roleName[currentRole] || 'User';
-      document.getElementById('sidebarName').innerText = currentRole === 'admin' ? 'Admin User' : (currentRole === 'client' ? 'Client Demo' : 'Team Member');
-      document.getElementById('sidebarAvatar').innerText = (currentRole === 'admin' ? 'AD' : (currentRole === 'client' ? 'CL' : 'TM'));
-      document.querySelector('.topbar-avatar').innerText = (currentRole === 'admin' ? 'AD' : (currentRole === 'client' ? 'CL' : 'TM'));
-      
-      // Redirect based on role
-      if (currentRole === 'caller') showSection('callers');
-      else if (currentRole === 'client') showSection('clients');
-      else showSection('dashboard');
-    }, 1200);
-  });
-  
-  // Navigation
-  function showSection(sectionId) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(`section-${sectionId}`).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelector(`.nav-item[data-section="${sectionId}"]`).classList.add('active');
-    let titles = { dashboard: 'Dashboard', callers: 'Cold Callers', outreachers: 'Outreachers', freelancers: 'Freelancers', pipeline: 'Pipeline', clients: 'Clients', projects: 'Projects', finance: 'Finance', analytics: 'Analytics', staffing: 'Staffing', settings: 'Settings', help: 'Help' };
-    document.getElementById('currentTitle').innerText = titles[sectionId] || sectionId;
+    console.log(`Login attempt with role: ${roleText}`);
+    
+    // Navigate based on role
+    if (roleText.includes('client')) {
+      window.location.href = 'pages/clients.html';
+    } else if (roleText.includes('freelancer')) {
+      window.location.href = 'pages/freelancers.html';
+    } else {
+      window.location.href = 'pages/dashboard.html';
+    }
   }
-  window.showSection = showSection;
-  
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => showSection(item.dataset.section));
+
+  // Enter key support
+  document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
   });
-  
-  // Sidebar collapse
-  let sidebarCollapsed = false;
-  document.getElementById('collapseBtn').addEventListener('click', () => {
-    sidebarCollapsed = !sidebarCollapsed;
-    document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
-    document.getElementById('collapseBtn').innerHTML = sidebarCollapsed ? '▶' : '◀';
+  document.getElementById('emailInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
   });
-  
-  // Logout
-  function logout() {
-    document.getElementById('app-shell').style.display = 'none';
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('loginEmail').value = 'admin@niche.com';
-    document.getElementById('loginPassword').value = 'password';
-  }
-  window.logout = logout;
-  
-  // Enter key login
-  document.getElementById('loginPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('signinBtn').click(); });
-  document.getElementById('loginEmail').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('signinBtn').click(); });
-  
-  console.log("✅ Niche CRM - Page de connexion + App chargée (1200+ lignes)");
 </script>
 </body>
-</html>
+</html> 
