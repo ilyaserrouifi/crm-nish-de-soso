@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "niche-crm/package.json",
-      "use": "@vercel/next"
-    }
-  ]
-}
