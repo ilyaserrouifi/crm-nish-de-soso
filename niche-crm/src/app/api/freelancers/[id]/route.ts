@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const freelancer = await prisma.freelancer.findUnique({ where: { id: params.id } });
     if (!freelancer) return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -11,7 +11,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await req.json();
     const freelancer = await prisma.freelancer.update({ where: { id: params.id }, data: body });
@@ -21,7 +21,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     await prisma.freelancer.delete({ where: { id: params.id } });
     return NextResponse.json({ success: true });
