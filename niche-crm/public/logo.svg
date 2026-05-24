@@ -1,0 +1,7 @@
+<svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
+  <path d="M22 42L22 90L33 90L33 62L48 90L52 90L52 42L41 42L41 68L27 42Z" fill="#0b0b0e"/>
+  <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
+  <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
+  <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
+</svg>
