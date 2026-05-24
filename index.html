@@ -518,13 +518,12 @@
       // Redirect based on role from database
       const role = data.role;
       if (role === 'CLIENT') {
-        window.location.href = '/client';
-      } else if (role === 'FREELANCER') {
-        window.location.href = '/freelancer';
-      } else {
-        // ADMIN, PROJECT_MANAGER, or any other role
-        window.location.href = '/dashboard';
-      }
+        window.location.href = 'page/dashboard.html';
+     } else if (role === 'FREELANCER') {
+         window.location.href = 'page/dashboard.html';
+     } else {
+         window.location.href = 'page/dashboard.html';
+     }
 
     } catch (err) {
       // Network or connection error
