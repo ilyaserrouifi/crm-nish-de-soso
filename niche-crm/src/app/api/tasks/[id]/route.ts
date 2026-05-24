@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  return NextResponse.json(await prisma.task.findUnique({ where: { id: params.id } }));
+  return NextResponse.json(await prisma.task.findUnique({ where: { id: (await params).id } }));
 }
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  return NextResponse.json(await prisma.task.update({ where: { id: params.id }, data: await req.json() }));
+  return NextResponse.json(await prisma.task.update({ where: { id: (await params).id }, data: await req.json() }));
 }
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  await prisma.task.delete({ where: { id: params.id } });
+  await prisma.task.delete({ where: { id: (await params).id } });
   return NextResponse.json({ success: true });
 }
