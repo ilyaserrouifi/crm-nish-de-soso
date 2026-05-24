@@ -3,33 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Niche CRM - Tableau de bord professionnel avec données réelles" />
-  <meta name="author" content="Niche CRM" />
   <title>Niche CRM — Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --bg: #0b0b0e;
       --blue: #2b2fff;
       --blue2: #4f5aff;
-      --card: rgba(255, 255, 255, 0.04);
-      --border: rgba(255, 255, 255, 0.07);
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.07);
       --text: #ededf2;
-      --muted: rgba(237, 237, 242, 0.4);
+      --muted: rgba(237,237,242,0.4);
       --green: #4ade80;
       --red: #f87171;
       --amber: #fbbf24;
       --purple: #a78bfa;
-      --transition: all 0.2s ease;
     }
-
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg);
@@ -38,54 +29,47 @@
       min-height: 100vh;
       position: relative;
     }
-
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
       background-size: 30px 30px;
       pointer-events: none;
       z-index: 0;
     }
-
-    .blob {
+    .blob-1, .blob-2 {
       position: fixed;
       border-radius: 50%;
       filter: blur(100px);
       pointer-events: none;
       z-index: 0;
     }
-    .blob-1 { width: 500px; height: 500px; background: rgba(43, 47, 255, 0.1); top: -150px; left: 200px; }
-    .blob-2 { width: 350px; height: 350px; background: rgba(43, 47, 255, 0.06); bottom: -80px; right: 100px; }
+    .blob-1 { width: 500px; height: 500px; background: rgba(43,47,255,0.1); top: -150px; left: 200px; }
+    .blob-2 { width: 350px; height: 350px; background: rgba(43,47,255,0.06); bottom: -80px; right: 100px; }
 
-    /* Sidebar */
     .sidebar {
       width: 220px;
-      background: rgba(255, 255, 255, 0.025);
+      background: rgba(255,255,255,0.025);
       border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
       position: fixed;
       left: 0;
       top: 0;
       bottom: 0;
-      z-index: 100;
       backdrop-filter: blur(10px);
+      z-index: 100;
     }
-
     .sidebar-logo {
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 24px 20px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 24px;
       cursor: pointer;
     }
     .sidebar-logo svg { width: 40px; height: 40px; }
     .logo-text .name { font-size: 16px; font-weight: 700; color: var(--text); }
-    .logo-text .sub { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+    .logo-text .sub { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
     .nav-section { padding: 0 12px; margin-bottom: 24px; }
     .nav-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 0 12px 8px 12px; }
     .nav-item {
@@ -93,16 +77,15 @@
       align-items: center;
       gap: 12px;
       padding: 10px 12px;
-      margin: 2px 0;
       border-radius: 9px;
       color: var(--muted);
       font-size: 13px;
       font-weight: 500;
       text-decoration: none;
-      transition: var(--transition);
+      transition: all 0.2s ease;
     }
-    .nav-item:hover { background: rgba(255, 255, 255, 0.06); color: var(--text); }
-    .nav-item.active { background: rgba(43, 47, 255, 0.15); border: 1px solid rgba(43, 47, 255, 0.25); color: var(--text); }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .nav-item.active { background: rgba(43,47,255,0.15); border: 1px solid rgba(43,47,255,0.25); color: var(--text); }
     .nav-item svg { width: 18px; height: 18px; opacity: 0.7; }
     .logout-btn {
       margin-top: auto;
@@ -110,29 +93,23 @@
       margin-left: 12px;
       margin-right: 12px;
       padding: 10px 12px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
       border-radius: 9px;
       color: var(--red);
       font-size: 13px;
-      font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 12px;
-      transition: var(--transition);
     }
-    .logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
+    .logout-btn:hover { background: rgba(239,68,68,0.2); }
 
-    /* Main Content */
     .main {
       margin-left: 220px;
       flex: 1;
-      position: relative;
       z-index: 10;
-      min-height: 100vh;
     }
-
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -144,14 +121,14 @@
       background: var(--bg);
       z-index: 20;
     }
-    .topbar-left h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
+    .topbar-left h1 { font-size: 22px; font-weight: 600; }
     .topbar-left p { font-size: 13px; color: var(--muted); margin-top: 4px; }
     .live-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(74, 222, 128, 0.1);
-      border: 1px solid rgba(74, 222, 128, 0.3);
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.3);
       border-radius: 30px;
       padding: 6px 12px;
       font-size: 12px;
@@ -164,7 +141,7 @@
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
     .admin-avatar {
       width: 40px;
       height: 40px;
@@ -174,16 +151,12 @@
       align-items: center;
       justify-content: center;
       font-weight: 600;
-      font-size: 16px;
-      color: white;
     }
-
     .content { padding: 28px 32px; }
 
-    /* Stats Cards */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4,1fr);
       gap: 20px;
       margin-bottom: 32px;
     }
@@ -192,13 +165,12 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 20px 24px;
-      transition: var(--transition);
+      transition: all 0.2s ease;
     }
-    .stat-card:hover { background: rgba(255, 255, 255, 0.06); transform: translateY(-2px); }
+    .stat-card:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
     .stat-value { font-size: 32px; font-weight: 700; margin-top: 8px; }
     .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
 
-    /* Pipeline scroll */
     .pipeline-scroll {
       display: flex;
       gap: 10px;
@@ -218,12 +190,11 @@
       text-align: center;
       flex-shrink: 0;
     }
-    .stage-card.won { border-color: rgba(74, 222, 128, 0.3); }
-    .stage-card.lost { border-color: rgba(248, 113, 113, 0.3); }
-    .stage-name { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+    .stage-card.won { border-color: rgba(74,222,128,0.3); }
+    .stage-card.lost { border-color: rgba(248,113,113,0.3); }
+    .stage-name { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .stage-count { font-size: 28px; font-weight: 700; }
 
-    /* Cards */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -231,30 +202,15 @@
       padding: 20px 24px;
       margin-bottom: 24px;
     }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 16px; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-    .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; }
+    .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-bottom: 24px; }
 
     .finance-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .finance-row:last-child { border-bottom: none; }
-    .finance-label { font-size: 13px; color: var(--muted); }
     .finance-value.green { color: var(--green); }
     .finance-value.red { color: var(--red); }
-    .finance-value.amber { color: var(--amber); }
-
     .lead-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .lead-row:last-child { border-bottom: none; }
-    .stage-badge { font-size: 10px; padding: 3px 8px; background: rgba(43, 47, 255, 0.15); border-radius: 20px; color: var(--blue); }
-    .deal-value { color: var(--green); font-weight: 500; }
-
+    .stage-badge { font-size: 10px; padding: 3px 8px; background: rgba(43,47,255,0.15); border-radius: 20px; color: var(--blue); }
     .member-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .score-badge {
       display: inline-block;
@@ -263,27 +219,21 @@
       font-size: 11px;
       font-weight: 600;
     }
-    .score-a { background: rgba(74, 222, 128, 0.15); color: var(--green); border: 1px solid rgba(74, 222, 128, 0.3); }
-    .score-b { background: rgba(43, 47, 255, 0.15); color: var(--blue); border: 1px solid rgba(43, 47, 255, 0.3); }
-    .score-c { background: rgba(251, 191, 36, 0.15); color: var(--amber); border: 1px solid rgba(251, 191, 36, 0.3); }
-    .score-d { background: rgba(248, 113, 113, 0.15); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.3); }
-
+    .score-a { background: rgba(74,222,128,0.15); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+    .score-b { background: rgba(43,47,255,0.15); color: var(--blue); border: 1px solid rgba(43,47,255,0.3); }
+    .score-c { background: rgba(251,191,36,0.15); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
+    .score-d { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
     .alert-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .alert-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .alert-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-    /* Analytics sparkline cards */
     .analytics-card { text-align: center; }
     .analytics-value { font-size: 28px; font-weight: 700; margin: 8px 0; }
     .analytics-sub { font-size: 11px; color: var(--muted); }
-    .sparkline-svg { width: 100%; height: 52px; margin-top: 12px; }
-
-    /* Bar chart */
     .bar-chart { display: flex; justify-content: space-between; align-items: flex-end; height: 52px; margin-top: 12px; gap: 4px; }
-    .bar { width: 16px; background: linear-gradient(180deg, rgba(167, 139, 250, 0.75), rgba(167, 139, 250, 0.5)); border-radius: 3px; transition: height 0.5s ease; }
+    .bar { width: 16px; background: linear-gradient(180deg, rgba(167,139,250,0.75), rgba(167,139,250,0.5)); border-radius: 3px; }
 
-    /* Map + countries */
     .map-card { padding: 0; overflow: hidden; }
-    .map-header { padding: 18px 22px 12px; }
+    .map-header { padding: 18px 22px 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
     #leafletMap { height: 320px; width: 100%; }
     .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) saturate(0.7); }
     .leaflet-container { background: #0d0d14; }
@@ -297,52 +247,46 @@
     }
     .country-flag { font-size: 17px; width: 26px; }
     .country-name { width: 110px; font-size: 13px; }
-    .country-bar-bg { flex: 1; height: 5px; background: rgba(255, 255, 255, 0.06); border-radius: 3px; overflow: hidden; }
+    .country-bar-bg { flex: 1; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
     .country-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue2)); border-radius: 3px; width: 0%; transition: width 1.2s ease; }
     .country-percent { width: 30px; font-size: 12px; color: var(--muted); text-align: right; }
 
-    /* Skeleton */
     .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; height: 18px; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .empty-state { text-align: center; padding: 40px; color: var(--muted); }
-
     .error-toast {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: rgba(248, 113, 113, 0.15);
-      border: 1px solid rgba(248, 113, 113, 0.3);
+      background: rgba(248,113,113,0.15);
+      border: 1px solid rgba(248,113,113,0.3);
       color: var(--red);
       padding: 12px 20px;
       border-radius: 10px;
       z-index: 999;
-      font-size: 13px;
-      backdrop-filter: blur(8px);
       animation: slideIn 0.3s ease;
     }
     @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    @media (max-width: 1024px) { .stats-grid, .three-col { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); position: fixed; z-index: 200; transition: transform 0.3s; }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; }
-      .stats-grid, .two-col, .three-col { grid-template-columns: 1fr; }
+    @media (max-width:1024px){ .stats-grid,.three-col{ grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:768px){
+      .sidebar{ transform:translateX(-100%); position:fixed; z-index:200; transition:transform 0.3s; }
+      .main{ margin-left:0; }
+      .stats-grid,.two-col,.three-col{ grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
+<div class="blob-1"></div>
+<div class="blob-2"></div>
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar">
   <div class="sidebar-logo" onclick="location.href='dashboard.html'">
     <svg viewBox="0 0 120 120" fill="none">
       <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
       <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
-      <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
+      <text x="80" y="90" font-family="Georgia,serif" font-size="28" font-weight="700" fill="white">che</text>
       <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
       <path d="M22 42L22 90L33 90L33 62L48 90L52 90L52 42L41 42L41 68L27 42Z" fill="#0b0b0e"/>
     </svg>
@@ -369,81 +313,79 @@
   <button class="logout-btn" onclick="location.href='../index.html'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l4-4-4-4M12 13h12" stroke="currentColor" stroke-width="2"/></svg>Logout</button>
 </aside>
 
-<!-- MAIN CONTENT -->
 <main class="main">
   <div class="topbar">
     <div class="topbar-left"><h1>Dashboard</h1><p id="currentDate"></p></div>
     <div class="topbar-right"><div class="live-badge"><span class="live-dot"></span>Live</div><div class="admin-avatar">A</div></div>
   </div>
-  <div class="content" id="app">
+  <div class="content">
     <div class="stats-grid" id="statsGrid"></div>
     <div class="pipeline-scroll" id="pipelineContainer"></div>
-    <div class="two-col"><div class="card" id="financeCard"><div class="card-title">💰 FINANCE SNAPSHOT</div><div id="financeContainer"></div></div><div class="card" id="recentLeadsCard"><div class="card-title">📋 RECENT LEADS</div><div id="recentLeadsContainer"></div></div></div>
-    <div class="two-col"><div class="card" id="leaderboardCard"><div class="card-title">🏆 TEAM LEADERBOARD</div><div id="leaderboardContainer"></div></div><div class="card" id="alertsCard"><div class="card-title">🔔 ACTIVE ALERTS</div><div id="alertsContainer"></div></div></div>
+    <div class="two-col">
+      <div class="card"><div class="card-title">💰 FINANCE SNAPSHOT</div><div id="financeContainer"></div></div>
+      <div class="card"><div class="card-title">📋 RECENT LEADS</div><div id="recentLeadsContainer"></div></div>
+    </div>
+    <div class="two-col">
+      <div class="card"><div class="card-title">🏆 TEAM LEADERBOARD</div><div id="leaderboardContainer"></div></div>
+      <div class="card"><div class="card-title">🔔 ACTIVE ALERTS</div><div id="alertsContainer"></div></div>
+    </div>
     <div class="card"><div class="card-title">📊 ANALYTICS OVERVIEW</div><div class="three-col" id="analyticsGrid"></div></div>
-    <div class="two-col"><div class="card map-card"><div class="map-header">🌍 LEADS BY REGION</div><div id="leafletMap"></div></div><div class="card"><div class="card-title">🏆 TOP COUNTRIES</div><div id="topCountries"></div></div></div>
+    <div class="two-col">
+      <div class="card map-card"><div class="map-header">🌍 LEADS BY REGION</div><div id="leafletMap"></div></div>
+      <div class="card"><div class="card-title">🏆 TOP COUNTRIES</div><div id="topCountries"></div></div>
+    </div>
   </div>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  // State
-  let statsData = null;
-  let financeData = null;
-  let alertsData = [];
-  let leaderboardData = [];
-  let callersData = [];
+  let statsData = null, financeData = null, alertsData = [], leaderboardData = [], callersData = [], regionStats = null;
 
   function showToast(msg) {
-    const toast = document.createElement('div');
-    toast.className = 'error-toast';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
+    const t = document.createElement('div'); t.className = 'error-toast'; t.textContent = msg;
+    document.body.appendChild(t); setTimeout(() => t.remove(), 4000);
   }
-
   function formatCurrency(n) { return '$' + (n || 0).toLocaleString(); }
   function formatPct(n) { return (n || 0).toFixed(1) + '%'; }
-
   function setDate() { document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
+  function escapeHtml(s) { if (!s) return ''; return String(s).replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
 
   function showSkeletons() {
-    document.getElementById('statsGrid').innerHTML = Array(4).fill(`<div class="stat-card"><div class="skeleton" style="height:32px; width:80px"></div><div class="stat-label">—</div></div>`).join('');
-    document.getElementById('pipelineContainer').innerHTML = Array(8).fill(`<div class="stage-card"><div class="skeleton" style="height:16px; margin-bottom:8px"></div><div class="skeleton" style="height:28px; width:40px; margin:0 auto"></div></div>`).join('');
+    document.getElementById('statsGrid').innerHTML = Array(4).fill('<div class="stat-card"><div class="skeleton" style="height:32px;width:80px"></div><div class="stat-label">—</div></div>').join('');
+    document.getElementById('pipelineContainer').innerHTML = Array(8).fill('<div class="stage-card"><div class="skeleton" style="height:16px;margin-bottom:8px"></div><div class="skeleton" style="height:28px;width:40px;margin:0 auto"></div></div>').join('');
     document.getElementById('financeContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
     document.getElementById('recentLeadsContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
     document.getElementById('leaderboardContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
     document.getElementById('alertsContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
-    document.getElementById('analyticsGrid').innerHTML = Array(3).fill(`<div class="skeleton" style="height:120px; border-radius:14px"></div>`).join('');
+    document.getElementById('analyticsGrid').innerHTML = Array(3).fill('<div class="skeleton" style="height:120px;border-radius:14px"></div>').join('');
     document.getElementById('topCountries').innerHTML = '<div class="skeleton" style="height:200px"></div>';
   }
 
-  // Fetch APIs
   async function fetchStats() {
-    try {
-      const res = await fetch('/api/stats');
-      if (!res.ok) throw new Error();
-      statsData = await res.json();
-    } catch (e) { statsData = { totalLeads: 0, totalClients: 0, activeTasks: 0, totalRevenue: 0, stageStats: [], recentLeads: [] }; showToast('Failed to load stats'); }
+    try { const r = await fetch('/api/stats'); if(!r.ok) throw new Error(); statsData = await r.json(); }
+    catch(e){ statsData={totalLeads:0,totalClients:0,activeTasks:0,totalRevenue:0,stageStats:[],recentLeads:[]}; showToast('Failed to load stats'); }
   }
   async function fetchFinance() {
-    try { const res = await fetch('/api/finance/stats'); if (!res.ok) throw new Error(); financeData = await res.json(); } 
-    catch (e) { financeData = { mrr: 0, totalRevenue: 0, totalExpenses: 0, netProfit: 0 }; showToast('Failed to load finance data'); }
+    try { const r = await fetch('/api/finance/stats'); if(!r.ok) throw new Error(); financeData = await r.json(); }
+    catch(e){ financeData={mrr:0,totalRevenue:0,totalExpenses:0,netProfit:0}; showToast('Failed to load finance'); }
   }
   async function fetchAlerts() {
-    try { const res = await fetch('/api/alerts'); if (!res.ok) throw new Error(); alertsData = await res.json(); } 
-    catch (e) { alertsData = []; }
+    try { const r = await fetch('/api/alerts'); if(!r.ok) throw new Error(); alertsData = await r.json(); }
+    catch(e){ alertsData=[]; }
   }
   async function fetchLeaderboard() {
-    try { const res = await fetch('/api/leaderboard'); if (!res.ok) throw new Error(); leaderboardData = await res.json(); } 
-    catch (e) { leaderboardData = []; }
+    try { const r = await fetch('/api/leaderboard'); if(!r.ok) throw new Error(); leaderboardData = await r.json(); }
+    catch(e){ leaderboardData=[]; }
   }
   async function fetchCallers() {
-    try { const res = await fetch('/api/cold-callers'); if (!res.ok) throw new Error(); callersData = await res.json(); } 
-    catch (e) { callersData = []; }
+    try { const r = await fetch('/api/cold-callers'); if(!r.ok) throw new Error(); callersData = await r.json(); }
+    catch(e){ callersData=[]; }
+  }
+  async function fetchRegionStats() {
+    try { const r = await fetch('/api/stats/regions'); if(!r.ok) throw new Error(); regionStats = await r.json(); }
+    catch(e){ regionStats = { us:0, uk:0, canada:0, australia:0, germany:0, uae:0, france:0, spain:0, italy:0, japan:0 }; showToast('Failed to load region stats'); }
   }
 
-  // Render functions
   function renderStats() {
     document.getElementById('statsGrid').innerHTML = `
       <div class="stat-card"><div class="stat-value" style="color:#60a5fa">${statsData?.totalLeads ?? 0}</div><div class="stat-label">📊 TOTAL LEADS</div></div>
@@ -454,81 +396,68 @@
   }
 
   function renderPipeline() {
-    const stages = { LEAD: 'Lead', CONTACTED: 'Contacted', MEETING_BOOKED: 'Meeting', QUALIFIED: 'Qualified', PROPOSAL_SENT: 'Proposal', NEGOTIATING: 'Negotiating', CLOSED_WON: 'Won ✅', CLOSED_LOST: 'Lost ❌' };
-    const stageMap = {};
-    (statsData?.stageStats || []).forEach(s => { stageMap[s.stage] = s._count; });
-    const container = document.getElementById('pipelineContainer');
-    container.innerHTML = Object.entries(stages).map(([key, label]) => {
-      const count = stageMap[key] ?? 0;
-      let extra = '';
-      if (key === 'CLOSED_WON') extra = 'won';
-      if (key === 'CLOSED_LOST') extra = 'lost';
-      return `<div class="stage-card ${extra}"><div class="stage-name">${label}</div><div class="stage-count">${count}</div></div>`;
-    }).join('');
+    const stages = { LEAD:'Lead', CONTACTED:'Contacted', MEETING_BOOKED:'Meeting', QUALIFIED:'Qualified', PROPOSAL_SENT:'Proposal', NEGOTIATING:'Negotiating', CLOSED_WON:'Won ✅', CLOSED_LOST:'Lost ❌' };
+    const map = {};
+    (statsData?.stageStats||[]).forEach(s => map[s.stage] = s._count);
+    document.getElementById('pipelineContainer').innerHTML = Object.entries(stages).map(([k,l])=>`<div class="stage-card ${k==='CLOSED_WON'?'won':k==='CLOSED_LOST'?'lost':''}"><div class="stage-name">${l}</div><div class="stage-count">${map[k]??0}</div></div>`).join('');
   }
 
   function renderFinance() {
     document.getElementById('financeContainer').innerHTML = `
-      <div class="finance-row"><span class="finance-label">MRR</span><span class="finance-value green">${formatCurrency(financeData?.mrr ?? 0)}</span></div>
-      <div class="finance-row"><span class="finance-label">Total Expenses</span><span class="finance-value red">${formatCurrency(financeData?.totalExpenses ?? 0)}</span></div>
-      <div class="finance-row"><span class="finance-label">Net Profit</span><span class="finance-value">${formatCurrency(financeData?.netProfit ?? 0)}</span></div>
-      <div class="finance-row"><span class="finance-label">Pending Invoices</span><span class="finance-value amber">${formatCurrency(0)}</span></div>
+      <div class="finance-row"><span>MRR</span><span class="finance-value green">${formatCurrency(financeData?.mrr)}</span></div>
+      <div class="finance-row"><span>Total Expenses</span><span class="finance-value red">${formatCurrency(financeData?.totalExpenses)}</span></div>
+      <div class="finance-row"><span>Net Profit</span><span>${formatCurrency(financeData?.netProfit)}</span></div>
     `;
   }
 
   function renderRecentLeads() {
     const leads = statsData?.recentLeads || [];
-    const container = document.getElementById('recentLeadsContainer');
-    if (!leads.length) { container.innerHTML = '<div class="empty-state">No leads yet</div>'; return; }
-    container.innerHTML = leads.map(l => `
-      <div class="lead-row"><span>${escapeHtml(l.companyName || '—')}</span><span class="stage-badge">${l.stage || '—'}</span><span class="deal-value">${formatCurrency(l.dealValue)}</span></div>
-    `).join('');
+    const c = document.getElementById('recentLeadsContainer');
+    if(!leads.length){ c.innerHTML='<div class="empty-state">No leads yet</div>'; return; }
+    c.innerHTML = leads.map(l=>`<div class="lead-row"><span>${escapeHtml(l.companyName||'—')}</span><span class="stage-badge">${l.stage||'—'}</span><span class="deal-value">${formatCurrency(l.dealValue)}</span></div>`).join('');
   }
 
   function renderLeaderboard() {
-    const container = document.getElementById('leaderboardContainer');
-    if (!leaderboardData.length) { container.innerHTML = '<div class="empty-state">No team data yet</div>'; return; }
-    const medals = ['🥇', '🥈', '🥉'];
-    container.innerHTML = leaderboardData.map((p, i) => `
-      <div class="member-row"><span>${medals[i] || '•'} ${escapeHtml(p.name)}</span><span class="score-badge score-${(p.score || 'd').toLowerCase()}">${p.score || 'D'}</span></div>
-    `).join('');
+    const c = document.getElementById('leaderboardContainer');
+    if(!leaderboardData.length){ c.innerHTML='<div class="empty-state">No team data yet</div>'; return; }
+    const medals = ['🥇','🥈','🥉'];
+    c.innerHTML = leaderboardData.map((p,i)=>`<div class="member-row"><span>${medals[i]||'•'} ${escapeHtml(p.name)}</span><span class="score-badge score-${(p.score||'d').toLowerCase()}">${p.score||'D'}</span></div>`).join('');
   }
 
   function renderAlerts() {
-    const container = document.getElementById('alertsContainer');
-    if (!alertsData.length) { container.innerHTML = '<div class="empty-state">No alerts</div>'; return; }
-    const severityColor = { high: '#f87171', medium: '#fbbf24', low: '#2b2fff' };
-    container.innerHTML = alertsData.map(a => `
-      <div class="alert-row"><div class="alert-dot" style="background:${severityColor[a.severity] || '#2b2fff'}"></div><span>${escapeHtml(a.message)}</span></div>
-    `).join('');
+    const c = document.getElementById('alertsContainer');
+    if(!alertsData.length){ c.innerHTML='<div class="empty-state">No alerts</div>'; return; }
+    const color = { high:'#f87171', medium:'#fbbf24', low:'#2b2fff' };
+    c.innerHTML = alertsData.map(a=>`<div class="alert-row"><div class="alert-dot" style="background:${color[a.severity]||'#2b2fff'}"></div><span>${escapeHtml(a.message)}</span></div>`).join('');
   }
 
   function renderAnalytics() {
-    const totalCallsToday = callersData.reduce((sum, c) => sum + (c.callsToday || 0), 0);
-    const activeCallers = callersData.filter(c => c.status === 'active').length || 1;
-    const avgCalls = Math.round(totalCallsToday / activeCallers);
+    const totalCalls = (callersData||[]).reduce((s,c)=>s+(c.callsToday||0),0);
+    const active = (callersData||[]).filter(c=>c.status==='active').length || 1;
+    const avgCalls = Math.round(totalCalls/active);
     const totalLeads = statsData?.totalLeads || 1;
-    const closedWon = (statsData?.stageStats || []).find(s => s.stage === 'CLOSED_WON')?._count || 0;
-    const convRate = (closedWon / totalLeads * 100);
+    const closedWon = (statsData?.stageStats||[]).find(s=>s.stage==='CLOSED_WON')?._count || 0;
+    const convRate = (closedWon/totalLeads*100);
     const mrr = financeData?.mrr || 0;
     document.getElementById('analyticsGrid').innerHTML = `
-      <div class="card analytics-card"><div class="card-title">📈 MRR GROWTH</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">+0% this month</div><svg class="sparkline-svg" viewBox="0 0 200 52" preserveAspectRatio="none"><path d="M0,42 C25,38 45,22 70,26 C95,30 115,12 140,16 C162,20 178,8 200,5" fill="none" stroke="#2b2fff" stroke-width="2"/><path d="M0,42 C25,38 45,22 70,26 C95,30 115,12 140,16 C162,20 178,8 200,5 L200,52 L0,52 Z" fill="url(#gradSpark)"/></svg></div>
-      <div class="card analytics-card"><div class="card-title">📞 CALLS / DAY</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">avg this week</div><div class="bar-chart" id="barChart"></div></div>
-      <div class="card analytics-card"><div class="card-title">🎯 CONVERSION RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">leads → closed</div><svg class="sparkline-svg" viewBox="0 0 200 52" preserveAspectRatio="none"><path d="M0,46 C30,40 55,28 85,18 C115,8 145,14 175,7 C185,5 193,4 200,3" fill="none" stroke="#4ade80" stroke-width="2"/><path d="M0,46 C30,40 55,28 85,18 C115,8 145,14 175,7 C185,5 193,4 200,3 L200,52 L0,52 Z" fill="url(#gradGreen)"/></svg></div>
+      <div class="card analytics-card"><div class="card-title">📈 MRR GROWTH</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">this month</div><div class="bar-chart">${[22,42,24,46,34,20,40].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
+      <div class="card analytics-card"><div class="card-title">📞 CALLS / DAY</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">avg per caller</div><div class="bar-chart">${[18,35,28,42,30,22,38].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
+      <div class="card analytics-card"><div class="card-title">🎯 CONVERSION RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">leads → closed</div><div class="bar-chart">${[30,28,25,22,20,18,15].map(h=>`<div class="bar" style="height:${h}px"></div>`).join('')}</div></div>
     `;
-    const barHeights = [22, 42, 24, 46, 34, 20, 40];
-    const barContainer = document.getElementById('barChart');
-    if (barContainer) barContainer.innerHTML = barHeights.map(h => `<div class="bar" style="height:${h}px"></div>`).join('');
   }
 
   function renderTopCountries() {
     const countries = [
-      { flag: '🇺🇸', name: 'United States', pct: 72 },
-      { flag: '🇬🇧', name: 'United Kingdom', pct: 48 },
-      { flag: '🇨🇦', name: 'Canada', pct: 35 },
-      { flag: '🇦🇺', name: 'Australia', pct: 28 },
-      { flag: '🇩🇪', name: 'Germany', pct: 20 },
-      { flag: '🇦🇪', name: 'UAE', pct: 15 }
+      { flag: '🇺🇸', name: 'United States', code: 'us', pct: regionStats?.us || 0 },
+      { flag: '🇬🇧', name: 'United Kingdom', code: 'uk', pct: regionStats?.uk || 0 },
+      { flag: '🇨🇦', name: 'Canada', code: 'canada', pct: regionStats?.canada || 0 },
+      { flag: '🇦🇺', name: 'Australia', code: 'australia', pct: regionStats?.australia || 0 },
+      { flag: '🇩🇪', name: 'Germany', code: 'germany', pct: regionStats?.germany || 0 },
+      { flag: '🇫🇷', name: 'France', code: 'france', pct: regionStats?.france || 0 },
+      { flag: '🇪🇸', name: 'Spain', code: 'spain', pct: regionStats?.spain || 0 },
+      { flag: '🇮🇹', name: 'Italy', code: 'italy', pct: regionStats?.italy || 0 },
+      { flag: '🇯🇵', name: 'Japan', code: 'japan', pct: regionStats?.japan || 0 },
+      { flag: '🇦🇪', name: 'UAE', code: 'uae', pct: regionStats?.uae || 0 }
     ];
     const container = document.getElementById('topCountries');
     container.innerHTML = countries.map(c => `
@@ -538,34 +467,40 @@
   }
 
   let mapInitialized = false;
-  function initMap() {
+  async function initMap() {
     if (mapInitialized || typeof L === 'undefined') { setTimeout(initMap, 300); return; }
-    const mapContainer = document.getElementById('leafletMap');
-    if (!mapContainer) return;
+    const container = document.getElementById('leafletMap');
+    if (!container) return;
+    
+    await fetchRegionStats();
+    const regions = [
+      { lat: 37.09, lng: -95.71, label: 'USA', value: regionStats?.us || 0, color: '#2b2fff' },
+      { lat: 51.50, lng: -0.12, label: 'UK', value: regionStats?.uk || 0, color: '#4f5aff' },
+      { lat: 56.13, lng: -106.3, label: 'Canada', value: regionStats?.canada || 0, color: '#2b2fff' },
+      { lat: -25.3, lng: 133.8, label: 'Australia', value: regionStats?.australia || 0, color: '#2b2fff' },
+      { lat: 51.16, lng: 10.45, label: 'Germany', value: regionStats?.germany || 0, color: '#4f5aff' },
+      { lat: 46.60, lng: 1.88, label: 'France', value: regionStats?.france || 0, color: '#2b2fff' },
+      { lat: 40.46, lng: -3.75, label: 'Spain', value: regionStats?.spain || 0, color: '#2b2fff' },
+      { lat: 41.87, lng: 12.56, label: 'Italy', value: regionStats?.italy || 0, color: '#4f5aff' },
+      { lat: 36.20, lng: 138.25, label: 'Japan', value: regionStats?.japan || 0, color: '#2b2fff' },
+      { lat: 23.42, lng: 53.85, label: 'UAE', value: regionStats?.uae || 0, color: '#2b2fff' }
+    ];
     const map = L.map('leafletMap').setView([20, 10], 2);
     map.attributionControl.setPrefix(false);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
-    const regions = [
-      { lat: 37.09, lng: -95.71, label: 'USA', leads: 72, color: '#2b2fff' },
-      { lat: 51.50, lng: -0.12, label: 'UK', leads: 48, color: '#4f5aff' },
-      { lat: 56.13, lng: -106.3, label: 'Canada', leads: 35, color: '#2b2fff' },
-      { lat: -25.3, lng: 133.8, label: 'Australia', leads: 28, color: '#2b2fff' },
-      { lat: 51.16, lng: 10.45, label: 'Germany', leads: 20, color: '#4f5aff' },
-      { lat: 23.42, lng: 53.85, label: 'UAE', leads: 15, color: '#2b2fff' }
-    ];
     regions.forEach(r => {
-      const size = Math.max(12, Math.min(28, r.leads / 3));
-      const marker = L.circleMarker([r.lat, r.lng], { radius: size, color: r.color, weight: 2, opacity: 0.8, fillOpacity: 0.6, fillColor: r.color }).addTo(map);
-      marker.bindPopup(`<b>${r.label}</b><br/>${r.leads}% of leads`);
+      if(r.value > 0){
+        const size = Math.max(8, Math.min(30, r.value / 2));
+        L.circleMarker([r.lat, r.lng], { radius: size, color: r.color, weight: 2, fillOpacity: 0.5, fillColor: r.color })
+          .addTo(map).bindPopup(`<b>${r.label}</b><br/>${r.value} leads`);
+      }
     });
     mapInitialized = true;
   }
 
-  function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-
   async function loadDashboard() {
     showSkeletons();
-    await Promise.all([fetchStats(), fetchFinance(), fetchAlerts(), fetchLeaderboard(), fetchCallers()]);
+    await Promise.all([fetchStats(), fetchFinance(), fetchAlerts(), fetchLeaderboard(), fetchCallers(), fetchRegionStats()]);
     renderStats(); renderPipeline(); renderFinance(); renderRecentLeads(); renderLeaderboard(); renderAlerts(); renderAnalytics(); renderTopCountries();
     initMap();
   }
