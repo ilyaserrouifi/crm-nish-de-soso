@@ -193,3 +193,38 @@ model ColdCaller {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 }
+
+model Income {
+  id        String   @id @default(cuid())
+  client    String
+  service   String
+  amount    Float
+  date      DateTime
+  type      String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  category  String
+  vendor    String
+  amount    Float
+  date      DateTime
+  recurring String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Investment {
+  id          String   @id @default(cuid())
+  name        String
+  invested    Float
+  expectedRoi Float
+  actualRoi   Float?
+  timeline    String
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
