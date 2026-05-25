@@ -219,3 +219,32 @@ model Investment {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model PipelineHistory {
+  id        String   @id @default(cuid())
+  leadId    String
+  fromStage String
+  toStage   String
+  note      String?
+  actor     String   @default("system")
+  createdAt DateTime @default(now())
+}
+
+model AutomationEvent {
+  id        String   @id @default(cuid())
+  type      String
+  leadId    String?
+  company   String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+}
+
+model ClientPortalMessage {
+  id          String   @id @default(cuid())
+  clientId     String
+  senderRole   String
+  senderName   String
+  message      String
+  attachmentUrl String?
+  createdAt    DateTime @default(now())
+}
