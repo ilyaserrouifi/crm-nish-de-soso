@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { isNonEmptyString, isOptionalNumber, isOptionalString } from '@/lib/validation'
 
 type CreateClientPayload = {
@@ -24,6 +25,15 @@ type NormalizedClientPayload = {
   status: string
   country?: string
   city?: string
+}
+
+function isMissingClientLocationColumnError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2022' &&
+    typeof error.meta?.column === 'string' &&
+    (error.meta.column.includes('Client.country') || error.meta.column.includes('Client.city'))
+  )
 }
 
 function normalizeCreateClient(payload: CreateClientPayload): { data: NormalizedClientPayload } | { error: string } {
@@ -61,6 +71,30 @@ export async function GET() {
 
     return NextResponse.json(clients)
   } catch (error) {
+    if (isMissingClientLocationColumnError(error)) {
+      try {
+        const clients = await prisma.client.findMany({
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            company: true,
+            name: true,
+            email: true,
+            phone: true,
+            niche: true,
+            mrr: true,
+            status: true,
+            createdAt: true,
+            projects: true,
+            invoices: true,
+          },
+        })
+        return NextResponse.json(clients.map((c) => ({ ...c, country: null, city: null })))
+      } catch (fallbackError) {
+        console.error('GET /api/clients fallback failed', fallbackError)
+      }
+    }
+
     console.error('GET /api/clients failed', error)
     return NextResponse.json({ error: 'Failed to fetch clients' }, { status: 500 })
   }
