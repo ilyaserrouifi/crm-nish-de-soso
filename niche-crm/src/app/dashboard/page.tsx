@@ -1,18 +1,33 @@
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
+
+type ClientRow = {
+  id: string
+  company: string
+  name: string
+  status: string
+  mrr: number
+  country?: string | null
+  city?: string | null
+}
 
 type GeoRow = {
   country: string
   count: number
 }
 
-async function getDashboardData() {
-  const [clientsCount, projects, tasks, invoices, expenses, clients] = await Promise.all([
-    prisma.client.count(),
-    prisma.project.count(),
-    prisma.task.count(),
-    prisma.invoice.aggregate({ _sum: { amount: true } }),
-    prisma.expense.aggregate({ _sum: { amount: true } }),
-    prisma.client.findMany({
+function isMissingColumnError(error: unknown, columnName: string): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2022' &&
+    typeof error.meta?.column === 'string' &&
+    error.meta.column.includes(columnName)
+  )
+}
+
+async function fetchClientsWithLocationFallback(): Promise<ClientRow[]> {
+  try {
+    return await prisma.client.findMany({
       select: {
         id: true,
         company: true,
@@ -23,7 +38,39 @@ async function getDashboardData() {
         mrr: true,
       },
       orderBy: { createdAt: 'desc' },
-    }),
+    })
+  } catch (error) {
+    if (!isMissingColumnError(error, 'Client.country') && !isMissingColumnError(error, 'Client.city')) {
+      throw error
+    }
+
+    const baseClients = await prisma.client.findMany({
+      select: {
+        id: true,
+        company: true,
+        name: true,
+        status: true,
+        mrr: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    return baseClients.map((client) => ({
+      ...client,
+      country: null,
+      city: null,
+    }))
+  }
+}
+
+async function getDashboardData() {
+  const [clientsCount, projects, tasks, invoices, expenses, clients] = await Promise.all([
+    prisma.client.count(),
+    prisma.project.count(),
+    prisma.task.count(),
+    prisma.invoice.aggregate({ _sum: { amount: true } }),
+    prisma.expense.aggregate({ _sum: { amount: true } }),
+    fetchClientsWithLocationFallback(),
   ])
 
   const invoiceTotal = invoices._sum.amount ?? 0
