@@ -12,15 +12,36 @@ type CreateClientPayload = {
   status?: unknown
 }
 
-function validateCreateClient(payload: CreateClientPayload) {
-  if (!isNonEmptyString(payload.company)) return 'company is required'
-  if (!isNonEmptyString(payload.name)) return 'name is required'
-  if (!isNonEmptyString(payload.email) || !payload.email.includes('@')) return 'valid email is required'
-  if (!isOptionalString(payload.phone)) return 'phone must be a string'
-  if (!isOptionalString(payload.niche)) return 'niche must be a string'
-  if (!isOptionalNumber(payload.mrr)) return 'mrr must be a number'
-  if (!isOptionalString(payload.status)) return 'status must be a string'
-  return null
+type NormalizedClientPayload = {
+  company: string
+  name: string
+  email: string
+  phone?: string
+  niche?: string
+  mrr: number
+  status: string
+}
+
+function normalizeCreateClient(payload: CreateClientPayload): { data?: NormalizedClientPayload; error?: string } {
+  if (!isNonEmptyString(payload.company)) return { error: 'company is required' }
+  if (!isNonEmptyString(payload.name)) return { error: 'name is required' }
+  if (!isNonEmptyString(payload.email) || !payload.email.includes('@')) return { error: 'valid email is required' }
+  if (!isOptionalString(payload.phone)) return { error: 'phone must be a string' }
+  if (!isOptionalString(payload.niche)) return { error: 'niche must be a string' }
+  if (!isOptionalNumber(payload.mrr)) return { error: 'mrr must be a number' }
+  if (!isOptionalString(payload.status)) return { error: 'status must be a string' }
+
+  return {
+    data: {
+      company: payload.company.trim(),
+      name: payload.name.trim(),
+      email: payload.email.toLowerCase().trim(),
+      phone: payload.phone?.trim(),
+      niche: payload.niche?.trim(),
+      mrr: payload.mrr ?? 0,
+      status: payload.status?.trim() || 'active',
+    },
+  }
 }
 
 export async function GET() {
@@ -40,22 +61,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as CreateClientPayload
-    const validationError = validateCreateClient(body)
+    const normalized = normalizeCreateClient(body)
 
-    if (validationError) {
-      return NextResponse.json({ error: validationError }, { status: 400 })
+    if (normalized.error) {
+      return NextResponse.json({ error: normalized.error }, { status: 400 })
     }
 
     const client = await prisma.client.create({
-      data: {
-        company: body.company,
-        name: body.name,
-        email: body.email,
-        phone: body.phone,
-        niche: body.niche,
-        mrr: body.mrr ?? 0,
-        status: body.status ?? 'active',
-      },
+      data: normalized.data,
     })
 
     return NextResponse.json(client, { status: 201 })
