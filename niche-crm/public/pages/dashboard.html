@@ -393,6 +393,7 @@
   let alertsData = [];
   let leaderboardData = [];
   let callersData = [];
+  let clientsData = [];
 
   function showToast(msg) {
     const toast = document.createElement('div');
@@ -441,6 +442,17 @@
   async function fetchCallers() {
     try { const res = await fetch('/api/cold-callers'); if (!res.ok) throw new Error(); callersData = await res.json(); } 
     catch (e) { callersData = []; }
+  }
+
+
+  async function fetchClients() {
+    try {
+      const res = await fetch('/api/clients');
+      if (!res.ok) throw new Error();
+      clientsData = await res.json();
+    } catch (e) {
+      clientsData = [];
+    }
   }
 
   // Render functions
@@ -521,19 +533,41 @@
     if (barContainer) barContainer.innerHTML = barHeights.map(h => `<div class="bar" style="height:${h}px"></div>`).join('');
   }
 
+  function countryFlag(codeOrName) {
+    const byName = {
+      'united states': 'US', 'united kingdom': 'GB', canada: 'CA', australia: 'AU', germany: 'DE',
+      france: 'FR', spain: 'ES', italy: 'IT', morocco: 'MA', uae: 'AE', 'united arab emirates': 'AE'
+    };
+    const raw = String(codeOrName || '').trim();
+    const code = raw.length === 2 ? raw.toUpperCase() : (byName[raw.toLowerCase()] || '');
+    if (!code || code.length !== 2) return '🌍';
+    return String.fromCodePoint(...[...code].map(c => 127397 + c.charCodeAt(0)));
+  }
+
+  function getCountryDistribution() {
+    const map = {};
+    clientsData.forEach(c => {
+      const key = (c.country || 'Unknown').trim() || 'Unknown';
+      map[key] = (map[key] || 0) + 1;
+    });
+    const entries = Object.entries(map).map(([name, count]) => ({ name, count }));
+    entries.sort((a, b) => b.count - a.count);
+    return entries;
+  }
+
   function renderTopCountries() {
-    const countries = [
-      { flag: '🇺🇸', name: 'United States', pct: 72 },
-      { flag: '🇬🇧', name: 'United Kingdom', pct: 48 },
-      { flag: '🇨🇦', name: 'Canada', pct: 35 },
-      { flag: '🇦🇺', name: 'Australia', pct: 28 },
-      { flag: '🇩🇪', name: 'Germany', pct: 20 },
-      { flag: '🇦🇪', name: 'UAE', pct: 15 }
-    ];
+    const dist = getCountryDistribution().slice(0, 8);
     const container = document.getElementById('topCountries');
-    container.innerHTML = countries.map(c => `
-      <div class="country-row"><span class="country-flag">${c.flag}</span><span class="country-name">${c.name}</span><div class="country-bar-bg"><div class="country-bar-fill" data-width="${c.pct}%"></div></div><span class="country-percent">${c.pct}%</span></div>
-    `).join('');
+    if (!dist.length) {
+      container.innerHTML = '<div class="empty-state">No client location data yet</div>';
+      return;
+    }
+    const max = dist[0].count || 1;
+    container.innerHTML = dist.map(c => {
+      const pct = Math.round((c.count / max) * 100);
+      return `
+      <div class="country-row"><span class="country-flag">${countryFlag(c.name)}</span><span class="country-name">${escapeHtml(c.name)}</span><div class="country-bar-bg"><div class="country-bar-fill" data-width="${pct}%"></div></div><span class="country-percent">${c.count}</span></div>
+    `}).join('');
     setTimeout(() => { document.querySelectorAll('.country-bar-fill').forEach(bar => { bar.style.width = bar.dataset.width; }); }, 300);
   }
 
@@ -545,27 +579,33 @@
     const map = L.map('leafletMap').setView([20, 10], 2);
     map.attributionControl.setPrefix(false);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
-    const regions = [
-      { lat: 37.09, lng: -95.71, label: 'USA', leads: 72, color: '#2b2fff' },
-      { lat: 51.50, lng: -0.12, label: 'UK', leads: 48, color: '#4f5aff' },
-      { lat: 56.13, lng: -106.3, label: 'Canada', leads: 35, color: '#2b2fff' },
-      { lat: -25.3, lng: 133.8, label: 'Australia', leads: 28, color: '#2b2fff' },
-      { lat: 51.16, lng: 10.45, label: 'Germany', leads: 20, color: '#4f5aff' },
-      { lat: 23.42, lng: 53.85, label: 'UAE', leads: 15, color: '#2b2fff' }
-    ];
-    regions.forEach(r => {
-      const size = Math.max(12, Math.min(28, r.leads / 3));
-      const marker = L.circleMarker([r.lat, r.lng], { radius: size, color: r.color, weight: 2, opacity: 0.8, fillOpacity: 0.6, fillColor: r.color }).addTo(map);
-      marker.bindPopup(`<b>${r.label}</b><br/>${r.leads}% of leads`);
+
+    const countryCenters = {
+      'United States': [37.09, -95.71], 'US': [37.09, -95.71], 'United Kingdom': [51.50, -0.12], 'GB': [51.50, -0.12],
+      'Canada': [56.13, -106.3], 'CA': [56.13, -106.3], 'Australia': [-25.3, 133.8], 'AU': [-25.3, 133.8],
+      'Germany': [51.16, 10.45], 'DE': [51.16, 10.45], 'UAE': [23.42, 53.85], 'United Arab Emirates': [23.42, 53.85], 'AE': [23.42, 53.85],
+      'Morocco': [31.79, -7.09], 'MA': [31.79, -7.09], 'France': [46.22, 2.21], 'FR': [46.22, 2.21], 'Spain': [40.46, -3.75], 'ES': [40.46, -3.75]
+    };
+
+    const dist = getCountryDistribution();
+    const max = dist[0]?.count || 1;
+    dist.forEach((r) => {
+      const center = countryCenters[r.name] || countryCenters[r.name.toUpperCase()];
+      if (!center) return;
+      const pct = Math.round((r.count / max) * 100);
+      const size = Math.max(8, Math.min(26, 6 + r.count * 1.5));
+      const marker = L.circleMarker(center, { radius: size, color: '#2b2fff', weight: 2, opacity: 0.8, fillOpacity: 0.6, fillColor: '#4f5aff' }).addTo(map);
+      marker.bindPopup(`<b>${escapeHtml(r.name)}</b><br/>${r.count} client(s)<br/>${pct}% vs top country`);
     });
     mapInitialized = true;
   }
+
 
   function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 
   async function loadDashboard() {
     showSkeletons();
-    await Promise.all([fetchStats(), fetchFinance(), fetchAlerts(), fetchLeaderboard(), fetchCallers()]);
+    await Promise.all([fetchStats(), fetchFinance(), fetchAlerts(), fetchLeaderboard(), fetchCallers(), fetchClients()]);
     renderStats(); renderPipeline(); renderFinance(); renderRecentLeads(); renderLeaderboard(); renderAlerts(); renderAnalytics(); renderTopCountries();
     initMap();
   }
