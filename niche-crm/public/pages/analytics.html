@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Niche CRM — Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body{font-family:'DM Sans',sans-serif;background:#0b0b0e;color:#ededf2;margin:0}
+    .wrap{padding:24px;max-width:1200px;margin:0 auto}
+    h1{margin:0 0 8px}
+    .muted{color:rgba(237,237,242,.55)}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+    .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px}
+    .k{font-size:12px;color:rgba(237,237,242,.55);text-transform:uppercase}
+    .v{font-size:30px;font-weight:700;margin-top:8px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+    .fill{height:100%;background:linear-gradient(90deg,#2b2fff,#4f5aff)}
+    @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Analytics</h1>
+    <p class="muted">100% data-driven analytics from CRM APIs (no fake demo numbers).</p>
+
+    <div class="grid" id="kpiGrid"></div>
+
+    <div class="two">
+      <div class="card">
+        <h3>Team Leaderboard</h3>
+        <table><thead><tr><th>Name</th><th>Score</th></tr></thead><tbody id="leaderboard"></tbody></table>
+      </div>
+      <div class="card">
+        <h3>Pipeline Funnel</h3>
+        <div id="funnel"></div>
+      </div>
+    </div>
+
+    <div class="two" style="margin-top:16px">
+      <div class="card">
+        <h3>Revenue by Niche (MRR)</h3>
+        <table><thead><tr><th>Niche</th><th>MRR</th></tr></thead><tbody id="nicheRows"></tbody></table>
+      </div>
+      <div class="card">
+        <h3>Caller Performance</h3>
+        <table><thead><tr><th>Name</th><th>Calls</th><th>Meetings</th><th>Closes</th></tr></thead><tbody id="callerRows"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const money = (n) => '$' + Number(n || 0).toLocaleString();
+const pct = (a,b) => b ? ((a/b)*100).toFixed(1) + '%' : '0.0%';
+
+async function fetchJson(url, fallback){
+  try{ const r = await fetch(url); if(!r.ok) throw new Error(); return await r.json(); }
+  catch{ return fallback; }
+}
+
+function renderKPIs(stats, finance, callers){
+  const calls = callers.reduce((s,c)=>s+(c.callsMade||0),0);
+  const meetings = callers.reduce((s,c)=>s+(c.meetingsBooked||0),0);
+  const closes = callers.reduce((s,c)=>s+(c.closes||0),0);
+  $('kpiGrid').innerHTML = `
+    <div class="card"><div class="k">Calls / day</div><div class="v">${calls}</div></div>
+    <div class="card"><div class="k">Meeting rate</div><div class="v">${pct(meetings,calls)}</div></div>
+    <div class="card"><div class="k">Close rate</div><div class="v">${pct(closes,meetings)}</div></div>
+    <div class="card"><div class="k">Net profit</div><div class="v">${money((finance.totalRevenue||0)-(finance.totalExpenses||0))}</div></div>
+  `;
+}
+
+function renderLeaderboard(rows){
+  $('leaderboard').innerHTML = rows.length
+    ? rows.map(r=>`<tr><td>${r.name||'—'}</td><td>${r.score||'—'}</td></tr>`).join('')
+    : '<tr><td colspan="2">No data</td></tr>';
+}
+
+function renderFunnel(stageStats){
+  const order=['LEAD','CONTACTED','MEETING_BOOKED','QUALIFIED','PROPOSAL_SENT','NEGOTIATING','CLOSED_WON'];
+  const map={}; (stageStats||[]).forEach(s=>map[s.stage]=s._count);
+  const top = Math.max(1, ...order.map(s=>map[s]||0));
+  $('funnel').innerHTML = order.map(stage=>{
+    const val=map[stage]||0;
+    const w=Math.round((val/top)*100);
+    return `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between"><span>${stage}</span><span>${val}</span></div><div class="bar"><div class="fill" style="width:${w}%"></div></div></div>`;
+  }).join('');
+}
+
+function renderNiche(clients){
+  const agg={};
+  clients.forEach(c=>{const k=(c.niche||'Unknown').trim()||'Unknown'; agg[k]=(agg[k]||0)+Number(c.mrr||0);});
+  const rows=Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  $('nicheRows').innerHTML = rows.length
+    ? rows.map(([n,v])=>`<tr><td>${n}</td><td>${money(v)}</td></tr>`).join('')
+    : '<tr><td colspan="2">No data</td></tr>';
+}
+
+function renderCallers(callers){
+  $('callerRows').innerHTML = callers.length
+    ? callers.slice(0,10).map(c=>`<tr><td>${c.name||'—'}</td><td>${c.callsMade||0}</td><td>${c.meetingsBooked||0}</td><td>${c.closes||0}</td></tr>`).join('')
+    : '<tr><td colspan="4">No data</td></tr>';
+}
+
+(async function init(){
+  const [stats, finance, leaderboard, callers, clients] = await Promise.all([
+    fetchJson('/api/stats', {stageStats:[], totalRevenue:0}),
+    fetchJson('/api/finance/stats', {totalRevenue:0,totalExpenses:0}),
+    fetchJson('/api/leaderboard', []),
+    fetchJson('/api/cold-callers', []),
+    fetchJson('/api/clients', []),
+  ]);
+
+  renderKPIs(stats, finance, callers);
+  renderLeaderboard(leaderboard);
+  renderFunnel(stats.stageStats || []);
+  renderNiche(clients);
+  renderCallers(callers);
+})();
+</script>
+</body>
+</html>
