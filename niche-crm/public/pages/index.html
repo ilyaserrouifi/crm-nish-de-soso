@@ -100,10 +100,9 @@
       margin-bottom: 24px;
       cursor: pointer;
     }
-    .sidebar-logo svg {
-      width: 40px;
-      height: 40px;
-    }
+    .brand-mark{width:40px;height:40px;border-radius:999px;background:linear-gradient(160deg,#191c26 0%,#0e1018 55%,#171a24 100%);position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+    .brand-mark::before{content:'N';font-weight:700;font-size:24px;line-height:1;color:#f4f6ff;font-family:'DM Sans',sans-serif;transform:translateX(-1px)}
+    .brand-mark::after{content:'';position:absolute;width:8px;height:8px;border-radius:50%;background:#2b2fff;right:-2px;top:-2px;box-shadow:0 0 12px rgba(43,47,255,.8)}
     .logo-text .name {
       font-size: 16px;
       font-weight: 700;
@@ -497,13 +496,7 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo" onclick="location.href='dashboard.html'">
-    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
-      <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
-      <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
-      <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
-      <path d="M22 42L22 90L33 90L33 62L48 90L52 90L52 42L41 42L41 68L27 42Z" fill="#0b0b0e"/>
-    </svg>
+    <div class="brand-mark" aria-hidden="true"></div>
     <div class="logo-text">
       <div class="name">Niche</div>
       <div class="sub">CRM Platform</div>
