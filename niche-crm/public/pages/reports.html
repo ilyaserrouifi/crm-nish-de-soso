@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Niche CRM - Reports" />
+  <meta name="author" content="Niche CRM" />
+  <title>Niche CRM — Reports</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#0b0b0e;--blue:#2b2fff;--card:rgba(255,255,255,.04);--hover:rgba(255,255,255,.06);--border:rgba(255,255,255,.07);--text:#ededf2;--muted:rgba(237,237,242,.4);--green:#4ade80;--amber:#fbbf24;--red:#f87171}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;position:relative}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+    .sidebar{width:220px;background:rgba(255,255,255,.025);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;backdrop-filter:blur(10px)}
+    .sidebar-logo{display:flex;align-items:center;gap:12px;padding:24px 20px;border-bottom:1px solid var(--border);margin-bottom:24px;cursor:pointer}
+    .brand-mark{width:40px;height:40px;border-radius:999px;background:linear-gradient(160deg,#191c26 0%,#0e1018 55%,#171a24 100%);position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+    .brand-mark::before{content:'N';font-weight:700;font-size:24px;color:#f4f6ff;transform:translateX(-1px)}
+    .brand-mark::after{content:'';position:absolute;width:8px;height:8px;border-radius:50%;background:#2b2fff;right:-2px;top:-2px;box-shadow:0 0 12px rgba(43,47,255,.8)}
+    .logo-text .name{font-size:16px;font-weight:700}.logo-text .sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+    .nav-section{padding:0 12px;margin-bottom:24px}.nav-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:0 12px 8px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:2px 0;border-radius:9px;color:var(--muted);font-size:13px;font-weight:500;text-decoration:none}.nav-item:hover{background:var(--hover);color:var(--text)}.nav-item.active{background:rgba(43,47,255,.15);border:1px solid rgba(43,47,255,.25);color:var(--text)}
+    .logout-btn{margin-top:auto;margin:0 12px 24px;padding:10px 12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:9px;color:var(--red);font-size:13px;font-weight:500;cursor:pointer}
+    .main{margin-left:220px;flex:1;position:relative;z-index:10}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 32px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg)}
+    .topbar h1{font-size:22px}.topbar p{font-size:13px;color:var(--muted);margin-top:4px}
+    .btn{background:var(--blue);border:none;border-radius:10px;padding:10px 18px;color:white;font-size:13.5px;font-weight:500;cursor:pointer}
+    .content{padding:28px 32px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
+    .k{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}.v{font-size:30px;font-weight:700;margin-top:8px}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}th{font-size:11px;color:var(--muted);text-transform:uppercase}
+    .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+    @media (max-width:1024px){.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}@media (max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo" onclick="location.href='dashboard.html'"><div class="brand-mark"></div><div class="logo-text"><div class="name">Niche</div><div class="sub">CRM Platform</div></div></div>
+  <div class="nav-section"><div class="nav-label">Main</div><a href="dashboard.html" class="nav-item">Dashboard</a><a href="pipeline.html" class="nav-item">Pipeline</a></div>
+  <div class="nav-section"><div class="nav-label">People</div><a href="cold-callers.html" class="nav-item">Cold Callers</a><a href="outreachers.html" class="nav-item">Outreachers</a><a href="freelancers.html" class="nav-item">Freelancers</a><a href="clients.html" class="nav-item">Clients</a></div>
+  <div class="nav-section"><div class="nav-label">Work</div><a href="tasks.html" class="nav-item">Tasks</a><a href="projects.html" class="nav-item">Projects</a><a href="finance.html" class="nav-item">Finance</a><a href="analytics.html" class="nav-item">Analytics</a><a href="reports.html" class="nav-item active">Reports</a></div>
+  <button class="logout-btn" onclick="location.href='../index.html'">Logout</button>
+</aside>
+<main class="main">
+  <div class="topbar"><div><h1>Reports</h1><p>Weekly and monthly operational reports for admin & clients</p></div><button class="btn">Export CSV</button></div>
+  <div class="content">
+    <div class="stats" id="kpis"></div>
+    <div class="two">
+      <div class="card"><div class="k">Weekly Client Report Preview</div><div id="weekly"></div></div>
+      <div class="card"><div class="k">Monthly Admin Report Preview</div><div id="monthly"></div></div>
+    </div>
+    <div class="two">
+      <div class="card"><div class="k">Top Team Performance</div><table><thead><tr><th>Name</th><th>Score</th><th>Calls</th><th>Meetings</th><th>Closes</th></tr></thead><tbody id="teamRows"></tbody></table></div>
+      <div class="card"><div class="k">Client Retention / Cohort</div><table><thead><tr><th>Month</th><th>Started</th><th>Active</th><th>Retention</th></tr></thead><tbody id="cohortRows"></tbody></table></div>
+    </div>
+  </div>
+</main>
+<script>
+const money=n=>'$'+Number(n||0).toLocaleString();
+const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
+const el=id=>document.getElementById(id);
+async function j(url,f){try{const r=await fetch(url);if(!r.ok)throw new Error();return await r.json();}catch{return f;}}
+(async function init(){
+  const [stats,finance,leaders,callers,clients]=await Promise.all([
+    j('/api/stats',{totalLeads:0,totalClients:0,totalRevenue:0,totalExpenses:0,stageStats:[]}),
+    j('/api/finance/stats',{mrr:0,totalRevenue:0,totalExpenses:0,netProfit:0}),
+    j('/api/leaderboard',[]),
+    j('/api/cold-callers',[]),
+    j('/api/clients',[]),
+  ]);
+  const calls=callers.reduce((s,c)=>s+(c.callsMade||0),0), meetings=callers.reduce((s,c)=>s+(c.meetingsBooked||0),0), closes=callers.reduce((s,c)=>s+(c.closes||0),0);
+  el('kpis').innerHTML=`<div class='card'><div class='k'>MRR</div><div class='v'>${money(finance.mrr||0)}</div></div><div class='card'><div class='k'>Net Profit</div><div class='v'>${money((finance.totalRevenue||0)-(finance.totalExpenses||0))}</div></div><div class='card'><div class='k'>Close Rate</div><div class='v'>${pct(closes,meetings)}</div></div><div class='card'><div class='k'>Client Retention</div><div class='v'>${pct(clients.filter(c=>(c.status||'').toLowerCase()==='active').length,clients.length)}</div></div>`;
+  el('weekly').innerHTML=`<div class='row'><span>Completed Work</span><strong>${stats.activeTasks||0} active tasks</strong></div><div class='row'><span>Pipeline Progress</span><strong>${stats.totalLeads||0} leads tracked</strong></div><div class='row'><span>Revenue This Week</span><strong>${money(stats.totalRevenue||0)}</strong></div><div class='row'><span>Plan Next Week</span><strong>Top 5 priority deals</strong></div>`;
+  el('monthly').innerHTML=`<div class='row'><span>Total Revenue</span><strong>${money(finance.totalRevenue||0)}</strong></div><div class='row'><span>Total Expenses</span><strong>${money(finance.totalExpenses||0)}</strong></div><div class='row'><span>Net Profit</span><strong>${money((finance.totalRevenue||0)-(finance.totalExpenses||0))}</strong></div><div class='row'><span>Team Performance</span><strong>${leaders.length} ranked members</strong></div>`;
+  el('teamRows').innerHTML=(leaders.length?leaders:callers).slice(0,8).map(c=>`<tr><td>${c.name||'—'}</td><td>${c.score||'—'}</td><td>${c.callsMade||0}</td><td>${c.meetingsBooked||0}</td><td>${c.closes||0}</td></tr>`).join('')||'<tr><td colspan="5">No data</td></tr>';
+  const m={}; clients.forEach(c=>{const d=new Date(c.createdAt);const k=d.toLocaleString('en-US',{month:'short',year:'numeric'});m[k]=m[k]||{s:0,a:0};m[k].s++;if((c.status||'').toLowerCase()==='active')m[k].a++;});
+  el('cohortRows').innerHTML=Object.entries(m).map(([k,v])=>`<tr><td>${k}</td><td>${v.s}</td><td>${v.a}</td><td>${pct(v.a,v.s)}</td></tr>`).join('')||'<tr><td colspan="4">No data</td></tr>';
+})();
+</script>
+</body>
+</html>
