@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const callers = await prisma.coldCaller.findMany({ orderBy: { createdAt: 'desc' } });
     return NextResponse.json(callers);
-  } catch (e) {
+  } catch {
     return NextResponse.json([]);
   }
 }
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const caller = await prisma.coldCaller.create({ data: body });
     return NextResponse.json(caller);
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
 }

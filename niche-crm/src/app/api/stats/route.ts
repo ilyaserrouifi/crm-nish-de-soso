@@ -46,7 +46,7 @@ export async function GET() {
       recentLeads,
       stageStats,
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 })
   }
 }
