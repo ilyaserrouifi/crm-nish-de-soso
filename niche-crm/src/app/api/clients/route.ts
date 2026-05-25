@@ -10,6 +10,8 @@ type CreateClientPayload = {
   niche?: unknown
   mrr?: unknown
   status?: unknown
+  country?: unknown
+  city?: unknown
 }
 
 type NormalizedClientPayload = {
@@ -20,6 +22,8 @@ type NormalizedClientPayload = {
   niche?: string
   mrr: number
   status: string
+  country?: string
+  city?: string
 }
 
 function normalizeCreateClient(payload: CreateClientPayload): { data: NormalizedClientPayload } | { error: string } {
@@ -30,6 +34,8 @@ function normalizeCreateClient(payload: CreateClientPayload): { data: Normalized
   if (!isOptionalString(payload.niche)) return { error: 'niche must be a string' }
   if (!isOptionalNumber(payload.mrr)) return { error: 'mrr must be a number' }
   if (!isOptionalString(payload.status)) return { error: 'status must be a string' }
+  if (!isOptionalString(payload.country)) return { error: 'country must be a string' }
+  if (!isOptionalString(payload.city)) return { error: 'city must be a string' }
 
   return {
     data: {
@@ -40,6 +46,8 @@ function normalizeCreateClient(payload: CreateClientPayload): { data: Normalized
       niche: payload.niche?.trim(),
       mrr: payload.mrr ?? 0,
       status: payload.status?.trim() || 'active',
+      country: payload.country?.trim(),
+      city: payload.city?.trim(),
     },
   }
 }

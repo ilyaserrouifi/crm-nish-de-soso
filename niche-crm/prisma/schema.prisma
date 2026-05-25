@@ -33,7 +33,7 @@ model Lead {
 }
 
 model Caller {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   name       String
   username   String
   phone      String
@@ -42,8 +42,8 @@ model Caller {
   salary     Float
   salaryType String
   niche      String
-  score      String    @default("B")
-  createdAt  DateTime  @default(now())
+  score      String   @default("B")
+  createdAt  DateTime @default(now())
   callLogs   CallLog[]
 }
 
@@ -112,6 +112,8 @@ model Client {
   email     String
   phone     String?
   niche     String?
+  country   String?
+  city      String?
   mrr       Float     @default(0)
   status    String    @default("active")
   createdAt DateTime  @default(now())
@@ -134,18 +136,18 @@ model Project {
 }
 
 model Task {
-  id              String     @id @default(cuid())
+  id              String      @id @default(cuid())
   projectId       String
-  project         Project    @relation(fields: [projectId], references: [id])
+  project         Project     @relation(fields: [projectId], references: [id])
   freelancerId    String?
   freelancer      Freelancer? @relation(fields: [freelancerId], references: [id])
   name            String
-  priority        String     @default("MEDIUM")
-  status          String     @default("TODO")
+  priority        String      @default("MEDIUM")
+  status          String      @default("TODO")
   deadline        DateTime?
-  visibleToClient Boolean    @default(false)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  visibleToClient Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model Invoice {
@@ -172,26 +174,26 @@ model Expense {
 }
 
 model ColdCaller {
-  id                   String    @id @default(cuid())
+  id                   String   @id @default(cuid())
   name                 String
   username             String
   phone                String
   email                String
   startDate            DateTime?
   niche                String?
-  salaryType           String    @default("fixed")
-  salaryBase           Float     @default(0)
-  commissionPerMeeting Float     @default(0)
-  bonusPerClose        Float     @default(0)
-  status               String    @default("active")
-  score                String    @default("D")
-  callsMade            Int       @default(0)
-  pickups              Int       @default(0)
-  meetingsBooked       Int       @default(0)
-  noShows              Int       @default(0)
-  closes               Int       @default(0)
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  salaryType           String   @default("fixed")
+  salaryBase           Float    @default(0)
+  commissionPerMeeting Float    @default(0)
+  bonusPerClose        Float    @default(0)
+  status               String   @default("active")
+  score                String   @default("D")
+  callsMade            Int      @default(0)
+  pickups              Int      @default(0)
+  meetingsBooked       Int      @default(0)
+  noShows              Int      @default(0)
+  closes               Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model Income {
@@ -205,7 +207,6 @@ model Income {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 model Investment {
   id          String   @id @default(cuid())
