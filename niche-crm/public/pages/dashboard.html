@@ -484,7 +484,7 @@
       <div class="finance-row"><span class="finance-label">MRR</span><span class="finance-value green">${formatCurrency(financeData?.mrr ?? 0)}</span></div>
       <div class="finance-row"><span class="finance-label">Total Expenses</span><span class="finance-value red">${formatCurrency(financeData?.totalExpenses ?? 0)}</span></div>
       <div class="finance-row"><span class="finance-label">Net Profit</span><span class="finance-value">${formatCurrency(financeData?.netProfit ?? 0)}</span></div>
-      <div class="finance-row"><span class="finance-label">Pending Invoices</span><span class="finance-value amber">${formatCurrency(0)}</span></div>
+      <div class="finance-row"><span class="finance-label">Pending Invoices</span><span class="finance-value amber">${financeData?.pendingInvoicesCount ?? 'N/A'}</span></div>
     `;
   }
 
@@ -516,21 +516,19 @@
   }
 
   function renderAnalytics() {
-    const totalCallsToday = callersData.reduce((sum, c) => sum + (c.callsToday || 0), 0);
-    const activeCallers = callersData.filter(c => c.status === 'active').length || 1;
-    const avgCalls = Math.round(totalCallsToday / activeCallers);
-    const totalLeads = statsData?.totalLeads || 1;
+    const totalCallsToday = callersData.reduce((sum, c) => sum + (c.callsMade || 0), 0);
+    const activeCallers = callersData.filter(c => (c.status || '').toLowerCase() === 'active').length;
+    const avgCalls = activeCallers ? Math.round(totalCallsToday / activeCallers) : 0;
+    const totalLeads = statsData?.totalLeads || 0;
     const closedWon = (statsData?.stageStats || []).find(s => s.stage === 'CLOSED_WON')?._count || 0;
-    const convRate = (closedWon / totalLeads * 100);
+    const meetingsBooked = callersData.reduce((sum, c) => sum + (c.meetingsBooked || 0), 0);
+    const convRate = totalLeads > 0 ? (closedWon / totalLeads * 100) : 0;
     const mrr = financeData?.mrr || 0;
     document.getElementById('analyticsGrid').innerHTML = `
-      <div class="card analytics-card"><div class="card-title">📈 MRR GROWTH</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">+0% this month</div><svg class="sparkline-svg" viewBox="0 0 200 52" preserveAspectRatio="none"><path d="M0,42 C25,38 45,22 70,26 C95,30 115,12 140,16 C162,20 178,8 200,5" fill="none" stroke="#2b2fff" stroke-width="2"/><path d="M0,42 C25,38 45,22 70,26 C95,30 115,12 140,16 C162,20 178,8 200,5 L200,52 L0,52 Z" fill="url(#gradSpark)"/></svg></div>
-      <div class="card analytics-card"><div class="card-title">📞 CALLS / DAY</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">avg this week</div><div class="bar-chart" id="barChart"></div></div>
-      <div class="card analytics-card"><div class="card-title">🎯 CONVERSION RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">leads → closed</div><svg class="sparkline-svg" viewBox="0 0 200 52" preserveAspectRatio="none"><path d="M0,46 C30,40 55,28 85,18 C115,8 145,14 175,7 C185,5 193,4 200,3" fill="none" stroke="#4ade80" stroke-width="2"/><path d="M0,46 C30,40 55,28 85,18 C115,8 145,14 175,7 C185,5 193,4 200,3 L200,52 L0,52 Z" fill="url(#gradGreen)"/></svg></div>
+      <div class="card analytics-card"><div class="card-title">📈 CURRENT MRR</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">Live total from active client contracts</div></div>
+      <div class="card analytics-card"><div class="card-title">📞 AVG CALLS / ACTIVE CALLER</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">Computed from total calls and active callers</div></div>
+      <div class="card analytics-card"><div class="card-title">🎯 CLOSED-WON RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">${closedWon} won / ${totalLeads} total leads · Meetings booked: ${meetingsBooked}</div></div>
     `;
-    const barHeights = [22, 42, 24, 46, 34, 20, 40];
-    const barContainer = document.getElementById('barChart');
-    if (barContainer) barContainer.innerHTML = barHeights.map(h => `<div class="bar" style="height:${h}px"></div>`).join('');
   }
 
   function countryFlag(codeOrName) {
@@ -572,31 +570,60 @@
   }
 
   let mapInitialized = false;
-  function initMap() {
+  const geoCache = new Map();
+
+  async function geocodeCountry(countryName) {
+    const key = String(countryName || '').trim().toLowerCase();
+    if (!key || key === 'unknown') return null;
+    if (geoCache.has(key)) return geoCache.get(key);
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(countryName)}`;
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error('Geocoding failed');
+      const rows = await res.json();
+      const item = rows?.[0];
+      const coords = item ? [Number(item.lat), Number(item.lon)] : null;
+      geoCache.set(key, coords);
+      return coords;
+    } catch (err) {
+      geoCache.set(key, null);
+      return null;
+    }
+  }
+
+  async function initMap() {
     if (mapInitialized || typeof L === 'undefined') { setTimeout(initMap, 300); return; }
     const mapContainer = document.getElementById('leafletMap');
     if (!mapContainer) return;
+
+    const dist = getCountryDistribution().filter(r => r.name.toLowerCase() !== 'unknown');
     const map = L.map('leafletMap').setView([20, 10], 2);
     map.attributionControl.setPrefix(false);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
 
-    const countryCenters = {
-      'United States': [37.09, -95.71], 'US': [37.09, -95.71], 'United Kingdom': [51.50, -0.12], 'GB': [51.50, -0.12],
-      'Canada': [56.13, -106.3], 'CA': [56.13, -106.3], 'Australia': [-25.3, 133.8], 'AU': [-25.3, 133.8],
-      'Germany': [51.16, 10.45], 'DE': [51.16, 10.45], 'UAE': [23.42, 53.85], 'United Arab Emirates': [23.42, 53.85], 'AE': [23.42, 53.85],
-      'Morocco': [31.79, -7.09], 'MA': [31.79, -7.09], 'France': [46.22, 2.21], 'FR': [46.22, 2.21], 'Spain': [40.46, -3.75], 'ES': [40.46, -3.75]
-    };
+    if (!dist.length) {
+      mapInitialized = true;
+      return;
+    }
 
-    const dist = getCountryDistribution();
     const max = dist[0]?.count || 1;
-    dist.forEach((r) => {
-      const center = countryCenters[r.name] || countryCenters[r.name.toUpperCase()];
-      if (!center) return;
+    const markerLatLngs = [];
+
+    for (const r of dist) {
+      const center = await geocodeCountry(r.name);
+      if (!center) continue;
       const pct = Math.round((r.count / max) * 100);
       const size = Math.max(8, Math.min(26, 6 + r.count * 1.5));
       const marker = L.circleMarker(center, { radius: size, color: '#2b2fff', weight: 2, opacity: 0.8, fillOpacity: 0.6, fillColor: '#4f5aff' }).addTo(map);
       marker.bindPopup(`<b>${escapeHtml(r.name)}</b><br/>${r.count} client(s)<br/>${pct}% vs top country`);
-    });
+      markerLatLngs.push(center);
+    }
+
+    if (markerLatLngs.length) {
+      map.fitBounds(markerLatLngs, { padding: [30, 30] });
+    }
+
     mapInitialized = true;
   }
 
