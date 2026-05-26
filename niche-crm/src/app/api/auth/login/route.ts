@@ -23,7 +23,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Too many login attempts. Please retry later.' }, { status: 429 })
     }
 
-    const body = (await req.json()) as LoginPayload
+    let body: LoginPayload
+    try {
+      body = (await req.json()) as LoginPayload
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    }
     if (!isNonEmptyString(body.identifier) || !isNonEmptyString(body.password)) {
       return NextResponse.json({ error: 'Identifier and password required' }, { status: 400 })
     }
@@ -76,7 +81,7 @@ export async function POST(req: Request) {
     }
 
     if (!emailVerifiedAt) {
-      return NextResponse.json({ error: 'Please verify your email before login' }, { status: 401 })
+      return NextResponse.json({ error: 'Please verify your email before login' }, { status: 403 })
     }
 
     const valid = await bcrypt.compare(body.password, user.password)
