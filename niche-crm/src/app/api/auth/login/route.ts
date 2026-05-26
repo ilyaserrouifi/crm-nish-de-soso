@@ -62,24 +62,28 @@ export async function POST(req: Request) {
       }
     } else {
       const normalizedPhone = normalizePhone(identifier)
-      const matches = await prisma.$queryRaw<
-        Array<{ id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }>
-      >`
-          SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
-          FROM "UserProfile" p
-          JOIN "User" u ON u.id = p."userId"
-          WHERE p.phone = ${normalizedPhone}
-          LIMIT 1
-        `
-      if (matches[0]) {
-        user = {
-          id: matches[0].id,
-          name: matches[0].name,
-          email: matches[0].email,
-          role: matches[0].role,
-          password: matches[0].password,
+      try {
+        const matches = await prisma.$queryRaw<
+          Array<{ id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }>
+        >`
+            SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
+            FROM "UserProfile" p
+            JOIN "User" u ON u.id = p."userId"
+            WHERE p.phone = ${normalizedPhone}
+            LIMIT 1
+          `
+        if (matches[0]) {
+          user = {
+            id: matches[0].id,
+            name: matches[0].name,
+            email: matches[0].email,
+            role: matches[0].role,
+            password: matches[0].password,
+          }
+          emailVerifiedAt = matches[0].emailVerifiedAt
         }
-        emailVerifiedAt = matches[0].emailVerifiedAt
+      } catch (phoneLookupError) {
+        console.error('POST /api/auth/login phone lookup warning', phoneLookupError)
       }
     }
 
