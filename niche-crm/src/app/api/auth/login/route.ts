@@ -47,23 +47,30 @@ export async function POST(req: Request) {
     if (identifierIsEmail) {
       user = await prisma.user.findUnique({ where: { email: identifier.toLowerCase() } })
       if (user) {
-        const matches = await prisma.$queryRaw<Array<{ emailVerifiedAt: Date | null }>>`
-          SELECT "emailVerifiedAt"
-          FROM "UserProfile"
-          WHERE "userId" = ${user.id}
-          LIMIT 1
-        `
-        emailVerifiedAt = matches[0]?.emailVerifiedAt ?? new Date()
+        try {
+          const matches = await prisma.$queryRaw<Array<{ emailVerifiedAt: Date | null }>>`
+            SELECT "emailVerifiedAt"
+            FROM "UserProfile"
+            WHERE "userId" = ${user.id}
+            LIMIT 1
+          `
+          emailVerifiedAt = matches[0]?.emailVerifiedAt ?? null
+        } catch (profileLookupError) {
+          console.error('POST /api/auth/login profile lookup failed', profileLookupError)
+          return NextResponse.json({ error: 'Profile setup missing. Contact support.' }, { status: 500 })
+        }
       }
     } else {
       const normalizedPhone = normalizePhone(identifier)
-      const matches = await prisma.$queryRaw<Array<{ id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }>>`
-        SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
-        FROM "UserProfile" p
-        JOIN "User" u ON u.id = p."userId"
-        WHERE p.phone = ${normalizedPhone}
-        LIMIT 1
-      `
+      const matches = await prisma.$queryRaw<
+        Array<{ id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }>
+      >`
+          SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
+          FROM "UserProfile" p
+          JOIN "User" u ON u.id = p."userId"
+          WHERE p.phone = ${normalizedPhone}
+          LIMIT 1
+        `
       if (matches[0]) {
         user = {
           id: matches[0].id,
@@ -94,8 +101,7 @@ export async function POST(req: Request) {
     response.cookies.set('crm_session', token, { httpOnly: true, secure: true, sameSite: 'lax', path: '/' })
     return response
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'unknown error'
-    console.error('POST /api/auth/login failed', { message })
+    console.error('POST /api/auth/login failed', error)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
