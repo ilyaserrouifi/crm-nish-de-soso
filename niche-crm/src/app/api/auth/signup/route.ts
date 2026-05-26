@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { isNonEmptyString, isValidEmail, isValidPhone, normalizePhone } from '@/lib/validation'
 import { checkRateLimit, generateOtpCode, isStrongPassword } from '@/lib/auth-security'
+import { sendVerificationOtpEmail } from '@/lib/resend-email'
 
 type SignupPayload = {
   fullName: unknown
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
     try {
       await prisma.$executeRaw`
         INSERT INTO "UserProfile" ("userId", phone, "avatarUrl", timezone, "emailVerifiedAt")
-        VALUES (${user.id}, ${phone}, ${avatarUrl}, ${isNonEmptyString(body.timezone) ? body.timezone : null}, ${new Date()})
+        VALUES (${user.id}, ${phone}, ${avatarUrl}, ${isNonEmptyString(body.timezone) ? body.timezone : null}, ${null})
         ON CONFLICT ("userId")
         DO UPDATE SET
           phone = EXCLUDED.phone,
@@ -90,12 +91,17 @@ export async function POST(req: Request) {
       console.warn('EmailVerificationCode persistence skipped:', otpError)
     }
 
+    try {
+      await sendVerificationOtpEmail({ to: email, otp })
+    } catch (emailError) {
+      console.error('OTP email send failed on signup:', emailError)
+    }
+
     return NextResponse.json(
       {
         ...user,
         verificationRequired: true,
-        verificationHint: 'Use the OTP sent to your email (dev fallback returned).',
-        devOtp: otp,
+        verificationHint: 'Use the OTP sent to your email to verify your account.',
       },
       { status: 201 },
     )

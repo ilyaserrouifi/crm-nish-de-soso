@@ -1,18 +1,43 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isNonEmptyString } from '@/lib/validation'
+import { generateOtpCode } from '@/lib/auth-security'
+import { sendVerificationOtpEmail } from '@/lib/resend-email'
 
-type Body = { email?: unknown; code?: unknown }
+type Body = { email?: unknown; code?: unknown; resend?: unknown }
 type OtpRow = { id: string; expiresAt: Date; consumedAt: Date | null }
 type UserRow = { id: string }
 
 export async function POST(req: Request) {
   const body = (await req.json()) as Body
-  if (!isNonEmptyString(body.email) || !isNonEmptyString(body.code)) {
-    return NextResponse.json({ error: 'email and code are required' }, { status: 400 })
+  if (!isNonEmptyString(body.email)) {
+    return NextResponse.json({ error: 'email is required' }, { status: 400 })
   }
 
   const email = body.email.toLowerCase().trim()
+
+  if (body.resend === true) {
+    const otp = generateOtpCode()
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+
+    await prisma.$executeRaw`
+      INSERT INTO "EmailVerificationCode" (email, code, "expiresAt")
+      VALUES (${email}, ${otp}, ${expiresAt})
+    `
+
+    try {
+      await sendVerificationOtpEmail({ to: email, otp })
+    } catch (emailError) {
+      console.error('OTP email send failed on resend:', emailError)
+    }
+
+    return NextResponse.json({ resent: true })
+  }
+
+  if (!isNonEmptyString(body.code)) {
+    return NextResponse.json({ error: 'code is required unless resend=true' }, { status: 400 })
+  }
+
   const code = body.code.trim()
 
   const rows = await prisma.$queryRaw<OtpRow[]>`
