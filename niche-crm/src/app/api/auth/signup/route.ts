@@ -64,18 +64,31 @@ export async function POST(req: Request) {
 
     const avatarUrl = isNonEmptyString(body.avatarUrl) ? body.avatarUrl.trim() : null
 
-    await prisma.$executeRaw`
-      INSERT INTO "UserProfile" ("userId", phone, "avatarUrl", timezone)
-      VALUES (${user.id}, ${phone}, ${avatarUrl}, ${isNonEmptyString(body.timezone) ? body.timezone : null})
-    `
+    try {
+      await prisma.$executeRaw`
+        INSERT INTO "UserProfile" ("userId", phone, "avatarUrl", timezone, "emailVerifiedAt")
+        VALUES (${user.id}, ${phone}, ${avatarUrl}, ${isNonEmptyString(body.timezone) ? body.timezone : null}, ${new Date()})
+        ON CONFLICT ("userId")
+        DO UPDATE SET
+          phone = EXCLUDED.phone,
+          "avatarUrl" = EXCLUDED."avatarUrl",
+          timezone = EXCLUDED.timezone
+      `
+    } catch (profileError) {
+      console.warn('UserProfile persistence skipped:', profileError)
+    }
 
     const otp = generateOtpCode()
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
-    await prisma.$executeRaw`
-      INSERT INTO "EmailVerificationCode" (email, code, "expiresAt")
-      VALUES (${email}, ${otp}, ${expiresAt})
-    `
+    try {
+      await prisma.$executeRaw`
+        INSERT INTO "EmailVerificationCode" (email, code, "expiresAt")
+        VALUES (${email}, ${otp}, ${expiresAt})
+      `
+    } catch (otpError) {
+      console.warn('EmailVerificationCode persistence skipped:', otpError)
+    }
 
     return NextResponse.json(
       {

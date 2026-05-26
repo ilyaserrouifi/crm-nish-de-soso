@@ -32,11 +32,15 @@ export async function POST(req: Request) {
     if (isValidEmail(identifier)) {
       user = await prisma.user.findUnique({ where: { email: identifier.toLowerCase() }, select: { id: true, email: true } })
     } else if (isValidPhone(identifier)) {
-      const profile = await prisma.userProfile.findFirst({
-        where: { phone: normalizePhone(identifier) },
-        include: { user: { select: { id: true, email: true } } },
-      })
-      user = profile?.user ?? null
+      const normalizedPhone = normalizePhone(identifier)
+      const matches = await prisma.$queryRaw<Array<{ id: string; email: string }>>`
+        SELECT u.id, u.email
+        FROM "UserProfile" p
+        JOIN "User" u ON u.id = p."userId"
+        WHERE p.phone = ${normalizedPhone}
+        LIMIT 1
+      `
+      user = matches[0] ?? null
     } else {
       return NextResponse.json({ error: 'Use a valid email or phone number.' }, { status: 400 })
     }

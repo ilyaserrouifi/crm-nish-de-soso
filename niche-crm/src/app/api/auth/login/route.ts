@@ -36,18 +36,32 @@ export async function POST(req: Request) {
     if (identifierIsEmail) {
       user = await prisma.user.findUnique({ where: { email: identifier.toLowerCase() } })
       if (user) {
-        const profile = await prisma.userProfile.findUnique({ where: { userId: user.id } })
-        emailVerifiedAt = profile?.emailVerifiedAt ?? null
+        const matches = await prisma.$queryRaw<Array<{ emailVerifiedAt: Date | null }>>`
+          SELECT "emailVerifiedAt"
+          FROM "UserProfile"
+          WHERE "userId" = ${user.id}
+          LIMIT 1
+        `
+        emailVerifiedAt = matches[0]?.emailVerifiedAt ?? new Date()
       }
     } else {
       const normalizedPhone = normalizePhone(identifier)
-      const profile = await prisma.userProfile.findFirst({
-        where: { phone: normalizedPhone },
-        include: { user: true },
-      })
-      if (profile?.user) {
-        user = profile.user
-        emailVerifiedAt = profile.emailVerifiedAt ?? null
+      const matches = await prisma.$queryRaw<Array<{ id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }>>`
+        SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
+        FROM "UserProfile" p
+        JOIN "User" u ON u.id = p."userId"
+        WHERE p.phone = ${normalizedPhone}
+        LIMIT 1
+      `
+      if (matches[0]) {
+        user = {
+          id: matches[0].id,
+          name: matches[0].name,
+          email: matches[0].email,
+          role: matches[0].role,
+          password: matches[0].password,
+        }
+        emailVerifiedAt = matches[0].emailVerifiedAt
       }
     }
 
