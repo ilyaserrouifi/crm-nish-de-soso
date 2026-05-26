@@ -189,15 +189,67 @@
     });
     document.getElementById('loginBtn').addEventListener('click', login);
 
-    document.getElementById('googleBtn').addEventListener('click', () => {
+    document.getElementById('googleBtn').addEventListener('click', async () => {
       msgEl.className = 'msg';
-      msgEl.textContent = 'Google login sera branché côté backend OAuth (prochaine étape).';
+      msgEl.textContent = '';
+      try {
+        const res = await fetch('/api/auth/google');
+        const data = await res.json();
+        if (!res.ok) {
+          msgEl.textContent = data.error || 'Google OAuth indisponible.';
+          return;
+        }
+        window.location.href = data.authUrl;
+      } catch {
+        msgEl.textContent = 'Erreur réseau avec Google OAuth.';
+      }
     });
 
-    document.getElementById('signupBtn').addEventListener('click', () => {
-      msgEl.className = 'msg ok';
-      msgEl.textContent = 'Inscription enregistrée en mode démo. Endpoint signup sera connecté ensuite.';
-    });
+    document.getElementById('signupBtn').addEventListener('click', signup);
+
+
+
+    async function signup() {
+      msgEl.textContent = '';
+      msgEl.className = 'msg';
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!fullName || !phone || !email || !password) {
+        msgEl.textContent = 'Merci de remplir nom, téléphone, email et mot de passe.';
+        return;
+      }
+
+      const btn = document.getElementById('signupBtn');
+      btn.disabled = true;
+      btn.textContent = 'Inscription...';
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, phone, email, password, role: 'CLIENT' })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          msgEl.textContent = data.error || 'Inscription échouée.';
+          return;
+        }
+
+        localStorage.setItem('crm_user', JSON.stringify(data));
+        msgEl.className = 'msg ok';
+        msgEl.textContent = 'Inscription réussie. Redirection...';
+        setTimeout(() => { window.location.href = '/pages/clients.html'; }, 700);
+      } catch {
+        msgEl.textContent = 'Erreur réseau, réessayez.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Inscription';
+      }
+    }
 
     async function login() {
       msgEl.textContent = '';
