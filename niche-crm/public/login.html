@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Niche CRM — Connexion</title>
+  <style>
+    :root {
+      --bg:#0b0b0e;--card:rgba(255,255,255,.04);--line:rgba(255,255,255,.10);
+      --text:#ededf2;--muted:rgba(237,237,242,.66);--primary:#2b2fff;--primary2:#4f5aff;
+      --danger:#f87171;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;font-family:'DM Sans',Arial,sans-serif;background:var(--bg);color:var(--text);display:grid;place-items:center;padding:20px}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+    .blob{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0}
+    .blob.a{width:380px;height:380px;background:rgba(43,47,255,.14);left:-120px;top:-60px}
+    .blob.b{width:300px;height:300px;background:rgba(79,90,255,.12);right:-80px;bottom:-80px}
+    .layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(300px,450px) minmax(280px,430px);gap:22px;max-width:980px;width:100%}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;backdrop-filter:blur(14px)}
+    .brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .logo{width:60px;height:60px;border-radius:14px;background:#101018;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+    .logo img{max-width:100%;max-height:100%;object-fit:contain}
+    h1{margin:0;font-size:24px;letter-spacing:-.4px}
+    .muted{margin:6px 0 0;color:var(--muted);font-size:14px}
+    .row{display:grid;gap:7px;margin-top:14px}
+    label{font-size:12px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted)}
+    input{width:100%;padding:12px 13px;background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--text);border-radius:11px;outline:none}
+    input:focus{border-color:var(--primary2);box-shadow:0 0 0 3px rgba(43,47,255,.25)}
+    .controls{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px;color:var(--muted)}
+    .btn{margin-top:14px;width:100%;padding:12px 13px;border:0;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:700;cursor:pointer}
+    .btn.secondary{margin-top:10px;background:transparent;border:1px solid var(--line);font-weight:600}
+    .msg{min-height:22px;margin-top:10px;font-size:13px;color:var(--danger)}
+    .ok{color:#4ade80}
+    .social{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .divider{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--muted);font-size:12px}
+    .divider::before,.divider::after{content:'';height:1px;background:var(--line);flex:1}
+    .aside h3{margin:0 0 10px}
+    .list{display:grid;gap:10px;margin-top:8px}
+    .pill{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 10px;display:inline-block;margin-right:6px;margin-bottom:6px}
+    .small{font-size:12px;color:var(--muted)}
+    @media (max-width:900px){.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="blob a"></div><div class="blob b"></div>
+  <div class="layout">
+    <section class="card">
+      <div class="brand">
+        <div class="logo"><img src="/assets/imagsoso.png" alt="Niche CRM logo" onerror="this.closest('.logo').textContent='N'" /></div>
+        <div>
+          <h1>Niche CRM Login</h1>
+          <p class="muted">Espace sécurisé — Admin, Finance, PM, Client, Freelancer.</p>
+        </div>
+      </div>
+
+      <div class="row"><label for="email">Email professionnel</label><input id="email" type="email" placeholder="you@company.com" autocomplete="email" /></div>
+      <div class="row"><label for="password">Mot de passe</label><input id="password" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
+      <div class="controls"><label><input id="remember" type="checkbox" /> Se souvenir de moi</label><a href="#" class="small">Mot de passe oublié ?</a></div>
+      <button class="btn" id="loginBtn">Se connecter</button>
+
+      <div class="divider">ou continuer avec</div>
+      <div class="social">
+        <button class="btn secondary" type="button" id="googleBtn">Google Workspace</button>
+        <button class="btn secondary" type="button" id="emailBtn">Lien email</button>
+      </div>
+      <p id="msg" class="msg"></p>
+    </section>
+
+    <aside class="card aside">
+      <h3>Profil & accès</h3>
+      <p class="muted">Après connexion, vous êtes redirigé automatiquement selon votre rôle.</p>
+      <div class="list">
+        <div><span class="pill">ADMIN</span>Dashboard complet + supervision.</div>
+        <div><span class="pill">FINANCE</span>Factures, MRR, profitabilité.</div>
+        <div><span class="pill">PROJECT_MANAGER</span>Projets, tâches, communication client.</div>
+        <div><span class="pill">CLIENT</span>Portail client + livrables visibles.</div>
+        <div><span class="pill">FREELANCER</span>Tâches assignées + suivi activité.</div>
+      </div>
+      <p class="small" style="margin-top:16px">Logo client: placez le fichier dans <code>/public/assets/imagsoso.png</code>.</p>
+    </aside>
+  </div>
+
+  <script>
+    const msgEl = document.getElementById('msg');
+    const roleRouteMap = {
+      ADMIN: '/pages/index.html',
+      FINANCE: '/pages/finance.html',
+      PROJECT_MANAGER: '/pages/projects.html',
+      CLIENT: '/pages/clients.html',
+      FREELANCER: '/pages/tasks.html'
+    };
+
+    document.getElementById('loginBtn').addEventListener('click', login);
+    document.getElementById('password').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') login();
+    });
+
+    document.getElementById('googleBtn').addEventListener('click', () => {
+      msgEl.textContent = 'Google SSO sera activé via OAuth provider côté backend.';
+      msgEl.className = 'msg';
+    });
+
+    document.getElementById('emailBtn').addEventListener('click', () => {
+      msgEl.textContent = 'Lien de connexion email sera activé avec service SMTP/Resend.';
+      msgEl.className = 'msg';
+    });
+
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+
+      if (!email || !password) {
+        msgEl.textContent = 'Veuillez saisir email et mot de passe.';
+        msgEl.className = 'msg';
+        return;
+      }
+
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.textContent = 'Connexion...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          msgEl.textContent = data.error || 'Connexion échouée.';
+          msgEl.className = 'msg';
+          return;
+        }
+
+        if (remember) {
+          localStorage.setItem('crm_user', JSON.stringify(data));
+        } else {
+          sessionStorage.setItem('crm_user', JSON.stringify(data));
+        }
+
+        msgEl.textContent = 'Connexion réussie. Redirection...';
+        msgEl.className = 'msg ok';
+
+        const role = String(data.role || '').toUpperCase();
+        const nextRoute = roleRouteMap[role] || '/pages/index.html';
+        window.location.href = nextRoute;
+      } catch {
+        msgEl.textContent = 'Serveur indisponible. Réessayez.';
+        msgEl.className = 'msg';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Se connecter';
+      }
+    }
+  </script>
+</body>
+</html>

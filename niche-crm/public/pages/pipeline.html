@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Niche CRM - Pipeline" />
+  <meta name="author" content="Niche CRM" />
+  <title>Niche CRM — Pipeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#0b0b0e;--blue:#2b2fff;--blue2:#4f5aff;--card:rgba(255,255,255,.04);--hover:rgba(255,255,255,.06);--border:rgba(255,255,255,.07);--text:#ededf2;--muted:rgba(237,237,242,.4);--green:#4ade80;--amber:#fbbf24;--red:#f87171}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;position:relative}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+    .sidebar{width:220px;background:rgba(255,255,255,.025);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;backdrop-filter:blur(10px)}
+    .sidebar-logo{display:flex;align-items:center;gap:12px;padding:24px 20px;border-bottom:1px solid var(--border);margin-bottom:24px;cursor:pointer}
+    .brand-mark{width:40px;height:40px;border-radius:999px;background:linear-gradient(160deg,#191c26 0%,#0e1018 55%,#171a24 100%);position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+    .brand-mark::before{content:'N';font-weight:700;font-size:24px;color:#f4f6ff;transform:translateX(-1px)}
+    .brand-mark::after{content:'';position:absolute;width:8px;height:8px;border-radius:50%;background:#2b2fff;right:-2px;top:-2px;box-shadow:0 0 12px rgba(43,47,255,.8)}
+    .logo-text .name{font-size:16px;font-weight:700}.logo-text .sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+    .nav-section{padding:0 12px;margin-bottom:24px}.nav-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:0 12px 8px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:2px 0;border-radius:9px;color:var(--muted);font-size:13px;font-weight:500;text-decoration:none}.nav-item:hover{background:var(--hover);color:var(--text)}.nav-item.active{background:rgba(43,47,255,.15);border:1px solid rgba(43,47,255,.25);color:var(--text)}
+    .logout-btn{margin-top:auto;margin:0 12px 24px;padding:10px 12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:9px;color:var(--red);font-size:13px;font-weight:500;cursor:pointer}
+    .main{margin-left:220px;flex:1;position:relative;z-index:10}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 32px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:20}
+    .topbar h1{font-size:22px}.topbar p{font-size:13px;color:var(--muted);margin-top:4px}
+    .add-btn{background:var(--blue);border:none;border-radius:10px;padding:10px 18px;color:white;font-size:13.5px;font-weight:500;cursor:pointer}
+    .content{padding:28px 32px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
+    .k{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}.v{font-size:30px;font-weight:700;margin-top:8px}
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}.toolbar input,.toolbar select{background:rgba(255,255,255,.042);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px}.toolbar input{flex:1;min-width:260px}
+    .kanban{display:flex;gap:14px;overflow:auto;padding-bottom:10px}.col{min-width:290px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:12px}.col-h{display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:10px}
+    .count{font-size:11px;color:var(--muted);background:var(--card);padding:2px 8px;border-radius:999px}
+    .deal{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px}.deal:hover{background:var(--hover)}
+    .deal-n{font-size:13px;font-weight:600}.deal-v{font-size:12px;color:var(--green);margin:6px 0}.deal-m{font-size:11px;color:var(--muted)}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+    table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}th{font-size:11px;color:var(--muted);text-transform:uppercase}
+    .badge{font-size:10px;padding:2px 8px;border-radius:999px}.high{background:rgba(248,113,113,.15);color:var(--red)}.medium{background:rgba(251,191,36,.15);color:var(--amber)}.low{background:rgba(74,222,128,.15);color:var(--green)}
+    @media (max-width:1024px){.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}@media (max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo" onclick="location.href='dashboard.html'"><div class="brand-mark"></div><div class="logo-text"><div class="name">Niche</div><div class="sub">CRM Platform</div></div></div>
+  <div class="nav-section"><div class="nav-label">Main</div><a href="dashboard.html" class="nav-item">Dashboard</a><a href="pipeline.html" class="nav-item active">Pipeline</a></div>
+  <div class="nav-section"><div class="nav-label">People</div><a href="cold-callers.html" class="nav-item">Cold Callers</a><a href="outreachers.html" class="nav-item">Outreachers</a><a href="freelancers.html" class="nav-item">Freelancers</a><a href="clients.html" class="nav-item">Clients</a></div>
+  <div class="nav-section"><div class="nav-label">Work</div><a href="tasks.html" class="nav-item">Tasks</a><a href="projects.html" class="nav-item">Projects</a><a href="finance.html" class="nav-item">Finance</a><a href="analytics.html" class="nav-item">Analytics</a></div>
+  <button class="logout-btn" onclick="location.href='../index.html'">Logout</button>
+</aside>
+<main class="main">
+  <div class="topbar"><div><h1>Pipeline</h1><p>Sales pipeline, conversion and automation visibility</p></div><button class="add-btn">+ Add Lead</button></div>
+  <div class="content">
+    <div class="stats" id="stats"></div>
+    <div class="toolbar"><input id="search" placeholder="Search company/contact/source/niche..."/><select id="stage"><option value="">All stages</option></select><select id="sort"><option value="newest">Newest</option><option value="value">Highest deal value</option></select></div>
+    <div class="kanban" id="kanban"></div>
+    <div class="two"><div class="card"><div class="k">Automation Alerts</div><table><thead><tr><th>Rule</th><th>Lead</th><th>Severity</th></tr></thead><tbody id="alerts"></tbody></table></div><div class="card"><div class="k">Conversion Funnel</div><table><thead><tr><th>Stage</th><th>Count</th><th>Vs Lead</th></tr></thead><tbody id="funnel"></tbody></table></div></div>
+  </div>
+</main>
+<script>
+const STAGES=['LEAD','CONTACTED','MEETING_BOOKED','QUALIFIED','PROPOSAL_SENT','NEGOTIATING','CLOSED_WON','CLOSED_LOST'];
+let rows=[];
+const money=n=>'$'+Number(n||0).toLocaleString();
+const el=id=>document.getElementById(id);
+async function j(url,f){try{const r=await fetch(url);if(!r.ok) throw new Error();return await r.json();}catch{return f;}}
+function daysSince(d){if(!d) return 0; return Math.floor((Date.now()-new Date(d).getTime())/86400000);}
+function renderStats(items){const total=items.reduce((s,l)=>s+Number(l.dealValue||0),0);const month=items.filter(l=>new Date(l.createdAt).getMonth()===new Date().getMonth()).reduce((s,l)=>s+Number(l.dealValue||0),0);const risk=items.filter(l=>['CONTACTED','NEGOTIATING','PROPOSAL_SENT'].includes((l.stage||'').toUpperCase()) && daysSince(l.createdAt)>=5).reduce((s,l)=>s+Number(l.dealValue||0),0);const won=items.filter(l=>(l.stage||'').toUpperCase()==='CLOSED_WON').reduce((s,l)=>s+Number(l.dealValue||0),0);el('stats').innerHTML=`<div class='card'><div class='k'>Pipeline total</div><div class='v'>${money(total)}</div></div><div class='card'><div class='k'>This month</div><div class='v'>${money(month)}</div></div><div class='card'><div class='k'>At risk</div><div class='v'>${money(risk)}</div></div><div class='card'><div class='k'>Closed won value</div><div class='v'>${money(won)}</div></div>`;}
+function renderKanban(items){const box=el('kanban'); box.innerHTML=STAGES.map(s=>{const list=items.filter(l=>(l.stage||'').toUpperCase()===s); const value=list.reduce((a,b)=>a+Number(b.dealValue||0),0); return `<div class='col'><div class='col-h'><strong>${s}</strong><span class='count'>${list.length} · ${money(value)}</span></div>${list.map(l=>`<div class='deal'><div class='deal-n'>${l.companyName||'—'}</div><div class='deal-v'>${money(l.dealValue||l.estimatedRevenue||0)}</div><div class='deal-m'>${l.contactName||'—'} · ${l.source||'—'} · ${l.niche||'—'}</div><div class='deal-m'>Days in stage: ${daysSince(l.createdAt)}</div></div>`).join('')||"<div class='deal-m'>No leads</div>"}</div>`}).join('');}
+function renderFunnel(items){const leadCount=Math.max(1,items.filter(i=>(i.stage||'').toUpperCase()==='LEAD').length);el('funnel').innerHTML=STAGES.map(s=>{const n=items.filter(i=>(i.stage||'').toUpperCase()===s).length;const p=((n/leadCount)*100).toFixed(1)+'%';return `<tr><td>${s}</td><td>${n}</td><td>${p}</td></tr>`}).join('');}
+function renderAlerts(items){const rows=[];items.forEach(l=>{const st=(l.stage||'').toUpperCase();const d=daysSince(l.createdAt);if(st==='CONTACTED'&&d>=3) rows.push({rule:'Contacted > 3 days',lead:l.companyName,sev:'high'});if(st==='PROPOSAL_SENT'&&d>=5) rows.push({rule:'Proposal > 5 days no reply',lead:l.companyName,sev:'high'});if(st==='MEETING_BOOKED'&&d>=2) rows.push({rule:'Meeting follow-up needed',lead:l.companyName,sev:'medium'});});el('alerts').innerHTML=rows.length?rows.map(r=>`<tr><td>${r.rule}</td><td>${r.lead||'—'}</td><td><span class='badge ${r.sev}'>${r.sev}</span></td></tr>`).join(''):'<tr><td colspan="3">No active alerts</td></tr>';}
+function apply(){const q=el('search').value.toLowerCase();const st=el('stage').value;const sort=el('sort').value;let x=rows.filter(r=>{const txt=`${r.companyName||''} ${r.contactName||''} ${r.source||''} ${r.niche||''}`.toLowerCase();return (!q||txt.includes(q)) && (!st||(r.stage||'').toUpperCase()===st)});if(sort==='value') x.sort((a,b)=>(b.dealValue||0)-(a.dealValue||0)); else x.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));renderStats(x);renderKanban(x);renderFunnel(x);renderAlerts(x);}
+(async function init(){rows=await j('/api/stats',{}).then(s=>s.recentLeads?[]:[]);rows=await j('/api/leads', null);if(!Array.isArray(rows)){rows=await j('/api/stats',{stageStats:[]}).then(async s=>{const fallback=await j('/api/clients',[]); return fallback.flatMap(c=>[{companyName:c.company,contactName:c.name,source:'ClientBase',niche:c.niche,dealValue:c.mrr,stage:'LEAD',createdAt:c.createdAt}]);});}
+const unique=[...new Set(rows.map(r=>(r.stage||'').toUpperCase()))].filter(Boolean);el('stage').innerHTML='<option value="">All stages</option>'+unique.map(s=>`<option value="${s}">${s}</option>`).join('');
+apply();el('search').addEventListener('input',apply);el('stage').addEventListener('change',apply);el('sort').addEventListener('change',apply);
+})();
+</script>
+</body>
+</html>

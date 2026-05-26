@@ -1,19 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Niche CRM - Tableau de bord professionnel" />
-  <meta name="author" content="Niche CRM" />
-  <title>Niche CRM — Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Niche CRM — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     :root {
       --bg-deep: #0b0b0e;
       --blue-primary: #2b2fff;
@@ -21,37 +13,32 @@
       --blue-glow: rgba(43, 47, 255, 0.35);
       --surface-card: rgba(255, 255, 255, 0.04);
       --surface-hover: rgba(255, 255, 255, 0.06);
-      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-subtle: rgba(255, 255, 255, 0.08);
       --text-primary: #ededf2;
-      --text-muted: rgba(237, 237, 242, 0.4);
-      --error-red: #ef4444;
-      --green: #4ade80;
-      --amber: #fbbf24;
-      --purple: #a78bfa;
-      --red: #f87171;
-      --transition: all 0.2s ease;
+      --text-muted: rgba(237, 237, 242, 0.56);
+      --success: #4ade80;
+      --danger: #f87171;
     }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
+      min-height: 100vh;
       font-family: 'DM Sans', sans-serif;
       background: var(--bg-deep);
       color: var(--text-primary);
-      display: flex;
-      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
       position: relative;
     }
-
-    /* Background effects */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 30px 30px;
       pointer-events: none;
+      background-image: radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 30px 30px;
       z-index: 0;
     }
-
     .blob {
       position: fixed;
       border-radius: 50%;
@@ -59,706 +46,277 @@
       pointer-events: none;
       z-index: 0;
     }
-    .blob-1 {
-      width: 500px;
-      height: 500px;
-      background: rgba(43, 47, 255, 0.1);
-      top: -150px;
-      left: 200px;
-    }
-    .blob-2 {
-      width: 350px;
-      height: 350px;
-      background: rgba(43, 47, 255, 0.06);
-      bottom: -80px;
-      right: 100px;
-    }
+    .blob.a { width: 460px; height: 460px; top: -180px; left: -140px; background: rgba(43,47,255,.14); }
+    .blob.b { width: 360px; height: 360px; right: -100px; bottom: -100px; background: rgba(43,47,255,.10); }
 
-    /* ============================================ */
-    /* SIDEBAR                                      */
-    /* ============================================ */
-    .sidebar {
-      width: 220px;
-      background: rgba(255, 255, 255, 0.025);
-      border-right: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 24px 20px;
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 24px;
-      cursor: pointer;
-    }
-    .sidebar-logo svg {
-      width: 40px;
-      height: 40px;
-    }
-    .logo-text .name {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    .logo-text .sub {
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .nav-section {
-      padding: 0 12px;
-      margin-bottom: 24px;
-    }
-    .nav-label {
-      font-size: 10px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      padding: 0 12px 8px 12px;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      margin: 2px 0;
-      border-radius: 9px;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-    .nav-item:hover {
-      background: var(--surface-hover);
-      color: var(--text-primary);
-    }
-    .nav-item.active {
-      background: rgba(43, 47, 255, 0.15);
-      border: 1px solid rgba(43, 47, 255, 0.25);
-      color: var(--text-primary);
-    }
-    .nav-item svg {
-      width: 18px;
-      height: 18px;
-      opacity: 0.7;
-    }
-
-    .logout-btn {
-      margin-top: auto;
-      margin-bottom: 24px;
-      margin-left: 12px;
-      margin-right: 12px;
-      padding: 10px 12px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 9px;
-      color: var(--red);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: var(--transition);
-    }
-    .logout-btn:hover {
-      background: rgba(239, 68, 68, 0.2);
-    }
-
-    /* ============================================ */
-    /* MAIN CONTENT                                 */
-    /* ============================================ */
-    .main {
-      margin-left: 220px;
-      flex: 1;
+    .layout {
       position: relative;
-      z-index: 10;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 32px;
-      border-bottom: 1px solid var(--border-subtle);
-      position: sticky;
-      top: 0;
-      background: var(--bg-deep);
-      z-index: 20;
-    }
-    .topbar-left h1 {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-    }
-    .topbar-left p {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .live-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(74, 222, 128, 0.1);
-      border: 1px solid rgba(74, 222, 128, 0.3);
-      border-radius: 30px;
-      padding: 6px 12px;
-      font-size: 12px;
-      color: var(--green);
-    }
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .admin-avatar {
-      width: 40px;
-      height: 40px;
-      background: var(--blue-primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 16px;
-      color: white;
-    }
-
-    /* Scrollable content */
-    .dashboard-content {
-      padding: 28px 32px;
-      overflow-y: auto;
-    }
-
-    /* Toast notification */
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(239, 68, 68, 0.95);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 13px;
-      z-index: 200;
-      display: none;
-      backdrop-filter: blur(8px);
-    }
-    .toast.show {
-      display: block;
-      animation: slideIn 0.3s ease;
-    }
-    @keyframes slideIn {
-      from { transform: translateX(100px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    /* Skeleton loading */
-    .skeleton {
-      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 8px;
-    }
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* Cards */
-    .stats-grid {
+      z-index: 5;
+      width: min(1060px, 100%);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-bottom: 32px;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 18px;
     }
-    .stat-card {
-      background: var(--surface-card);
+
+    .panel {
       border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 20px 24px;
-      transition: var(--transition);
-    }
-    .stat-card:hover {
-      background: var(--surface-hover);
-      transform: translateY(-2px);
-    }
-    .stat-value {
-      font-size: 32px;
-      font-weight: 700;
-      margin-top: 12px;
-    }
-    .stat-label {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* Pipeline scroll */
-    .pipeline-scroll {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 32px;
-    }
-    .pipeline-scroll::-webkit-scrollbar {
-      height: 4px;
-    }
-    .pipeline-scroll::-webkit-scrollbar-track {
-      background: var(--border-subtle);
-      border-radius: 4px;
-    }
-    .pipeline-scroll::-webkit-scrollbar-thumb {
-      background: var(--blue-primary);
-      border-radius: 4px;
-    }
-    .stage-card {
-      min-width: 140px;
       background: var(--surface-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-    .stage-card.won {
-      border-color: rgba(74, 222, 128, 0.3);
-    }
-    .stage-card.lost {
-      border-color: rgba(248, 113, 113, 0.3);
-    }
-    .stage-name {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .stage-count {
-      font-size: 28px;
-      font-weight: 700;
+      backdrop-filter: blur(16px);
+      border-radius: 22px;
+      box-shadow: 0 32px 90px rgba(0,0,0,.52), 0 0 42px rgba(43,47,255,.08);
     }
 
-    /* Two columns layout */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-    .card {
-      background: var(--surface-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 20px 24px;
-    }
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-    }
+    .hero { padding: 34px; display: grid; align-content: space-between; min-height: 620px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-mark{width:52px;height:52px;border-radius:999px;background:linear-gradient(160deg,#191c26 0%,#0e1018 55%,#171a24 100%);position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+    .brand-mark::before{content:'N';font-weight:700;font-size:30px;line-height:1;color:#f4f6ff;font-family:'DM Sans',sans-serif;transform:translateX(-1px)}
+    .brand-mark::after{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:#2b2fff;right:-2px;top:-2px;box-shadow:0 0 12px rgba(43,47,255,.8)}
+    .brand h1 { font-size: 22px; font-weight: 700; }
+    .sub { font-size: 10px; text-transform: uppercase; letter-spacing: 2.3px; color: var(--text-muted); margin-top: 2px; }
 
-    .finance-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .finance-row:last-child {
-      border-bottom: none;
-    }
-    .finance-label {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .finance-value {
-      font-size: 18px;
-      font-weight: 600;
-    }
-    .finance-value.green { color: var(--green); }
-    .finance-value.red { color: var(--red); }
-    .finance-value.amber { color: var(--amber); }
+    .hero-copy h2 { font-size: 42px; line-height: 1.1; letter-spacing: -1px; margin-bottom: 14px; }
+    .hero-copy p { color: var(--text-muted); line-height: 1.6; max-width: 520px; }
 
-    .lead-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .lead-row:last-child {
-      border-bottom: none;
-    }
-    .company {
-      font-weight: 500;
-    }
-    .stage-badge {
-      font-size: 11px;
-      padding: 4px 8px;
-      background: rgba(43, 47, 255, 0.15);
-      border-radius: 20px;
-      color: var(--blue-primary);
-    }
-    .deal {
-      font-weight: 500;
-      color: var(--green);
-    }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+    .feature { border: 1px solid var(--border-subtle); background: rgba(255,255,255,.02); border-radius: 12px; padding: 10px 12px; font-size: 13px; color: var(--text-muted); }
 
-    .member-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-subtle);
+    .auth { padding: 34px; }
+    .auth h3 { font-size: 30px; letter-spacing: -.5px; margin-bottom: 6px; }
+    .auth .muted { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 13px 0 8px; }
+    input {
+      width: 100%; padding: 13px 14px; border-radius: 11px;
+      border: 1px solid var(--border-subtle); background: rgba(255,255,255,.035);
+      color: var(--text-primary); font-size: 14px;
     }
-    .member-row:last-child {
-      border-bottom: none;
+    input:focus { outline: none; border-color: var(--blue-hover); box-shadow: 0 0 0 3px rgba(43,47,255,.25); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn {
+      width: 100%; border: 0; border-radius: 11px; padding: 13px;
+      font-weight: 600; font-size: 14px; cursor: pointer; transition: .2s;
     }
-    .score {
-      font-weight: 600;
-      color: var(--blue-primary);
+    .btn-primary { margin-top: 16px; color: #fff; background: var(--blue-primary); box-shadow: 0 0 30px var(--blue-glow); }
+    .btn-primary:hover { background: var(--blue-hover); }
+    .btn-secondary {
+      background: rgba(255,255,255,.03); color: var(--text-primary); border: 1px solid var(--border-subtle);
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     }
+    .social { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .divider { margin: 14px 0 10px; display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 12px; }
+    .divider::before, .divider::after { content:''; height:1px; background: var(--border-subtle); flex:1; }
+    .msg { min-height: 20px; margin-top: 10px; font-size: 13px; color: var(--danger); }
+    .msg.ok { color: var(--success); }
+    .msg.info { color: #93c5fd; }
+    .hint{margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.4}
+    .status-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;border:1px solid var(--border-subtle);color:var(--text-muted);margin-bottom:10px}
 
-    .alert-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .alert-row:last-child {
-      border-bottom: none;
-    }
-    .alert-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .empty {
-      text-align: center;
-      padding: 32px;
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-
-    @media (max-width: 1024px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .two-col { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); position: fixed; z-index: 200; transition: transform 0.3s; }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; }
-      .stats-grid { grid-template-columns: 1fr; }
+    @media (max-width: 930px) {
+      .layout { grid-template-columns: 1fr; }
+      .hero { min-height: auto; }
+      .hero-copy h2 { font-size: 34px; }
+      .row, .social, .feature-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+  <div class="blob a"></div>
+  <div class="blob b"></div>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
+  <div class="layout">
+    <section class="panel hero">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <h1>Niche CRM</h1>
+          <p class="sub">CRM Platform</p>
+        </div>
+      </div>
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo" onclick="location.href='dashboard.html'">
-    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
-      <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
-      <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
-      <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
-      <path d="M22 42L22 90L33 90L33 62L48 90L52 90L52 42L41 42L41 68L27 42Z" fill="#0b0b0e"/>
-    </svg>
-    <div class="logo-text">
-      <div class="name">Niche</div>
-      <div class="sub">CRM Platform</div>
-    </div>
+      <div class="hero-copy">
+        <h2>Grow faster with your agency operating system.</h2>
+        <p>Gérez clients, pipeline, projets, finance et performance d’équipe depuis un seul espace connecté et sécurisé.</p>
+        <div class="feature-grid">
+          <div class="feature">⚡ Sales Pipeline & Automation</div>
+          <div class="feature">📊 Revenue, MRR & Profit Tracking</div>
+          <div class="feature">👥 Client + Talent Portal</div>
+          <div class="feature">🧠 Smart Team Performance Monitoring</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel auth">
+      <span class="status-pill">Secure access</span>
+      <h3 id="formTitle">Connexion</h3>
+      <p class="muted" id="formSubtitle">Accédez avec email ou téléphone.</p>
+
+      <div class="social" style="margin-top:0;margin-bottom:14px;">
+        <button class="btn btn-secondary" id="tabLogin" type="button">Connexion</button>
+        <button class="btn btn-secondary" id="tabSignup" type="button">Inscription</button>
+      </div>
+
+      <div id="signupBlock" style="display:none;">
+        <label>Photo de profil (optionnel)</label>
+        <div class="row" style="grid-template-columns:74px 1fr;align-items:center;">
+          <img id="avatarPreview" src="https://placehold.co/74x74/101322/eef2ff?text=+" alt="avatar" style="width:74px;height:74px;border-radius:999px;object-fit:cover;border:1px solid var(--border-subtle);" />
+          <input id="avatar" type="file" accept="image/*" />
+        </div>
+        <label for="fullName">Nom complet</label>
+        <input id="fullName" type="text" placeholder="Votre nom" />
+      </div>
+
+      <label for="identifier">Email ou téléphone</label>
+      <input id="identifier" type="text" placeholder="you@company.com ou +212612345678" autocomplete="username" />
+
+      <div id="phoneBlock" style="display:none;">
+        <label for="phone">Téléphone</label>
+        <input id="phone" type="tel" placeholder="+212612345678" />
+      </div>
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+      <p class="hint" id="passwordHint" style="display:none;">Password fort: 10+ caractères avec majuscule, minuscule, chiffre, symbole.</p>
+
+      <button class="btn btn-primary" id="mainBtn">Se connecter</button>
+      <button class="btn btn-secondary" id="forgotBtn" type="button" style="margin-top:10px;">Mot de passe oublié ?</button>
+
+      <div class="divider">ou continuer avec</div>
+      <button class="btn btn-secondary" id="googleBtn" type="button">Google</button>
+
+      
+
+      <div id="verifyBlock" style="display:none; margin-top:12px;">
+        <label for="otpCode">Code OTP</label>
+        <input id="otpCode" type="text" placeholder="Entrez le code reçu par email" />
+        <div class="social" style="margin-top:10px;">
+          <button class="btn btn-secondary" id="verifyBtn" type="button">Vérifier le code</button>
+          <button class="btn btn-secondary" id="resendBtn" type="button">Renvoyer OTP</button>
+        </div>
+      </div>
+
+      <p id="msg" class="msg"></p>
+    </section>
   </div>
 
-  <div class="nav-section">
-    <div class="nav-label">MAIN</div>
-    <a href="dashboard.html" class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.3"/></svg>
-      Dashboard
-    </a>
-    <a href="leads.html" class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="18" rx="1.5" fill="currentColor"/><rect x="10" y="3" width="5" height="12" rx="1.5" fill="currentColor"/><rect x="17" y="3" width="5" height="15" rx="1.5" fill="currentColor"/></svg>
-      Pipeline
-    </a>
-  </div>
+  <script>
+    const roleRouteMap = { ADMIN:'/pages/dashboard.html', FINANCE:'/pages/finance.html', PROJECT_MANAGER:'/pages/projects.html', CLIENT:'/pages/clients.html', FREELANCER:'/pages/tasks.html' };
+    const msgEl = document.getElementById('msg');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const signupBlock = document.getElementById('signupBlock');
+    const phoneBlock = document.getElementById('phoneBlock');
+    const identifierInput = document.getElementById('identifier');
+    const passwordHint = document.getElementById('passwordHint');
+    const titleEl = document.getElementById('formTitle');
+    const subtitleEl = document.getElementById('formSubtitle');
+    const mainBtn = document.getElementById('mainBtn');
+    const avatarInput = document.getElementById('avatar');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const forgotBtn = document.getElementById('forgotBtn');
+    const verifyBlock = document.getElementById('verifyBlock');
+    const otpCodeInput = document.getElementById('otpCode');
+    let mode='login';
+    let avatarDataUrl='';
 
-  <div class="nav-section">
-    <div class="nav-label">PEOPLE</div>
-    <a href="cold-callers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.12.45 2.33.69 3.57.69a1 1 0 011 1V20a1 1 0 01-1 1C10.56 21 3 13.44 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.24 2.45.69 3.57a1 1 0 01-.22 1.11l-2.2 2.11z" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>Cold Callers</a>
-    <a href="outreachers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8"/></svg>Outreachers</a>
-    <a href="freelancers.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c0-3.31 3.58-6 8-6s8 2.69 8 6" stroke="currentColor" stroke-width="1.8"/></svg>Freelancers</a>
-    <a href="clients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="1.8"/></svg>Clients</a>
-  </div>
+    function setMessage(text,tone='error'){ msgEl.className = tone==='success' ? 'msg ok' : tone==='info' ? 'msg info' : 'msg'; msgEl.textContent=text; }
+    function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function normalizePhone(phone){ return phone.replace(/\s+/g,'').replace(/[()-]/g,''); }
+    function isValidPhone(phone){ return /^\+?[0-9]{8,15}$/.test(normalizePhone(phone)); }
 
-  <div class="nav-section">
-    <div class="nav-label">WORK</div>
-    <a href="tasks.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3 5-6" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>Tasks</a>
-    <a href="finance.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 6v12M9 9.5c0-1.1.9-2 2-2h2a2 2 0 010 4h-2a2 2 0 000 4h2a2 2 0 002-2" stroke="currentColor" stroke-width="1.8"/></svg>Finance</a>
-    <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="14" width="4" height="7" rx="1" fill="currentColor"/><rect x="10" y="9" width="4" height="12" rx="1" fill="currentColor"/><rect x="17" y="4" width="4" height="17" rx="1" fill="currentColor"/></svg>Analytics</a>
-  </div>
-
-  <button class="logout-btn" onclick="location.href='../index.html'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l4-4-4-4M12 13h12" stroke="currentColor" stroke-width="2"/></svg>
-    Logout
-  </button>
-</aside>
-
-<!-- MAIN CONTENT -->
-<main class="main">
-  <div class="topbar">
-    <div class="topbar-left">
-      <h1>Dashboard</h1>
-      <p id="currentDate"></p>
-    </div>
-    <div class="topbar-right">
-      <div class="live-badge"><span class="live-dot"></span>Live</div>
-      <div class="admin-avatar">A</div>
-    </div>
-  </div>
-
-  <div class="dashboard-content">
-    <!-- Stats Cards Grid (4 cards) -->
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:60px"></div><div class="stat-label">Total Leads</div></div>
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:60px"></div><div class="stat-label">Active Clients</div></div>
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:60px"></div><div class="stat-label">Active Tasks</div></div>
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:80px"></div><div class="stat-label">Revenue</div></div>
-    </div>
-
-    <!-- Pipeline Stages (horizontal scroll) -->
-    <div class="pipeline-scroll" id="pipelineContainer"></div>
-
-    <!-- Two columns: Finance + Recent Leads -->
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">💰 FINANCE SNAPSHOT</div>
-        <div id="financeContainer"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">📋 RECENT LEADS</div>
-        <div id="recentLeadsContainer"></div>
-      </div>
-    </div>
-
-    <!-- Two columns: Leaderboard + Alerts -->
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">🏆 TEAM LEADERBOARD</div>
-        <div id="leaderboardContainer"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">🔔 ACTIVE ALERTS</div>
-        <div id="alertsContainer"></div>
-      </div>
-    </div>
-  </div>
-</main>
-
-<div id="toast" class="toast"></div>
-
-<script>
-  // Display current date
-  function updateDate() {
-    const dateEl = document.getElementById('currentDate');
-    if (dateEl) {
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      dateEl.textContent = new Date().toLocaleDateString('en-US', options);
+    function setMode(next){
+      mode=next;
+      const signup = mode==='signup';
+      signupBlock.style.display = signup ? 'block':'none';
+      phoneBlock.style.display = signup ? 'block':'none';
+      passwordHint.style.display = signup ? 'block':'none';
+      titleEl.textContent = signup ? 'Inscription' : 'Connexion';
+      subtitleEl.textContent = signup ? 'Créez votre profil en quelques secondes.' : 'Accédez avec email ou téléphone.';
+      mainBtn.textContent = signup ? 'Créer mon compte' : 'Se connecter';
+      forgotBtn.style.display = signup ? 'none' : 'block';
+      tabSignup.style.borderColor = signup ? 'var(--blue-hover)' : 'var(--border-subtle)';
+      tabLogin.style.borderColor = !signup ? 'var(--blue-hover)' : 'var(--border-subtle)';
+      identifierInput.placeholder = signup ? 'you@company.com' : 'you@company.com ou +212612345678';
+      verifyBlock.style.display = 'none';
+      setMessage('', 'info');
     }
-  }
 
-  // Show toast error
-  function showError(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 5000);
-  }
+    avatarInput.addEventListener('change', ()=>{
+      const file = avatarInput.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { avatarDataUrl = String(reader.result || ''); avatarPreview.src = avatarDataUrl; };
+      reader.readAsDataURL(file);
+    });
 
-  // Skeleton state for containers
-  function showSkeleton() {
-    document.getElementById('statsGrid').innerHTML = `
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:60px"></div><div class="stat-label">Total Leads</div></div>
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:60px"></div><div class="stat-label">Active Clients</div></div>
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:60px"></div><div class="stat-label">Active Tasks</div></div>
-      <div class="stat-card"><div class="skeleton" style="height:32px; width:80px"></div><div class="stat-label">Revenue</div></div>
-    `;
-    document.getElementById('pipelineContainer').innerHTML = '<div class="skeleton" style="height:80px; width:100%; margin-bottom:20px"></div>';
-    document.getElementById('financeContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
-    document.getElementById('recentLeadsContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
-    document.getElementById('leaderboardContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
-    document.getElementById('alertsContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
-  }
+    document.getElementById('password').addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitForm(); });
+    tabLogin.addEventListener('click', ()=>setMode('login'));
+    tabSignup.addEventListener('click', ()=>setMode('signup'));
+    document.getElementById('googleBtn').addEventListener('click', async ()=>{
+      setMessage('Connexion Google...', 'info');
+      const res=await fetch('/api/auth/google'); const data=await res.json();
+      if(!res.ok){ setMessage(data.error || 'Google OAuth indisponible.'); return; }
+      window.location.href=data.authUrl;
+    });
+    mainBtn.addEventListener('click', submitForm);
+    forgotBtn.addEventListener('click', forgotPassword);
 
-  // Stage mapping
-  const STAGES = ['LEAD', 'CONTACTED', 'MEETING_BOOKED', 'QUALIFIED', 'PROPOSAL_SENT', 'NEGOTIATING', 'CLOSED_WON', 'CLOSED_LOST'];
-  const STAGE_LABELS = {
-    LEAD: 'Lead', CONTACTED: 'Contacted', MEETING_BOOKED: 'Meeting',
-    QUALIFIED: 'Qualified', PROPOSAL_SENT: 'Proposal',
-    NEGOTIATING: 'Negotiating', CLOSED_WON: 'Won ✅', CLOSED_LOST: 'Lost ❌'
-  };
-
-  // Render functions
-  function renderStats(data) {
-    const colors = { totalLeads: '#60a5fa', totalClients: '#a78bfa', activeTasks: '#4ade80', totalRevenue: '#fbbf24' };
-    const icons = { totalLeads: '📊', totalClients: '🏢', activeTasks: '✓', totalRevenue: '💰' };
-    document.getElementById('statsGrid').innerHTML = `
-      <div class="stat-card"><div class="stat-value" style="color:${colors.totalLeads}">${data.totalLeads ?? 0}</div><div class="stat-label">📊 Total Leads</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:${colors.totalClients}">${data.totalClients ?? 0}</div><div class="stat-label">🏢 Active Clients</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:${colors.activeTasks}">${data.activeTasks ?? 0}</div><div class="stat-label">✓ Active Tasks</div></div>
-      <div class="stat-card"><div class="stat-value" style="color:${colors.totalRevenue}">$${(data.totalRevenue ?? 0).toLocaleString()}</div><div class="stat-label">💰 Revenue</div></div>
-    `;
-  }
-
-  function renderPipeline(stageStats) {
-    const statsMap = {};
-    if (stageStats && Array.isArray(stageStats)) {
-      stageStats.forEach(s => { statsMap[s.stage] = s._count; });
+    async function submitForm(){
+      if(mode==='signup') return signup();
+      return login();
     }
-    const container = document.getElementById('pipelineContainer');
-    container.innerHTML = STAGES.map(stage => {
-      const count = statsMap[stage] ?? 0;
-      let extraClass = '';
-      if (stage === 'CLOSED_WON') extraClass = 'won';
-      if (stage === 'CLOSED_LOST') extraClass = 'lost';
-      return `<div class="stage-card ${extraClass}">
-        <div class="stage-name">${STAGE_LABELS[stage]}</div>
-        <div class="stage-count">${count}</div>
-      </div>`;
-    }).join('');
-  }
 
-  function renderFinance(data) {
-    document.getElementById('financeContainer').innerHTML = `
-      <div class="finance-row"><span class="finance-label">MRR</span><span class="finance-value green">$${(data.mrr ?? 0).toLocaleString()}</span></div>
-      <div class="finance-row"><span class="finance-label">Total Expenses</span><span class="finance-value red">$${(data.totalExpenses ?? 0).toLocaleString()}</span></div>
-      <div class="finance-row"><span class="finance-label">Net Profit</span><span class="finance-value">$${(data.netProfit ?? 0).toLocaleString()}</span></div>
-      <div class="finance-row"><span class="finance-label">Pending Invoices</span><span class="finance-value amber">$${(data.pendingInvoices ?? 0).toLocaleString()}</span></div>
-    `;
-  }
-
-  function renderRecentLeads(leads) {
-    const container = document.getElementById('recentLeadsContainer');
-    if (!leads || leads.length === 0) {
-      container.innerHTML = '<div class="empty">No leads yet</div>';
-      return;
+    async function signup(){
+      const fullName=document.getElementById('fullName').value.trim();
+      const phone=document.getElementById('phone').value.trim();
+      const email=identifierInput.value.trim();
+      const password=document.getElementById('password').value;
+      if(!fullName || !phone || !email || !password){ setMessage('Remplissez nom, téléphone, email et mot de passe.'); return; }
+      if(!isValidEmail(email)){ setMessage('Email invalide.'); return; }
+      if(!isValidPhone(phone)){ setMessage('Téléphone invalide.'); return; }
+      mainBtn.disabled=true; mainBtn.textContent='Création...';
+      try{
+        const res=await fetch('/api/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fullName, phone, email, password, role:'CLIENT', avatarUrl: avatarDataUrl || null})});
+        const data=await res.json(); if(!res.ok){ setMessage(data.error || 'Inscription échouée.'); return; }
+        setMessage('Compte créé. Vérifiez email OTP puis connectez-vous.', 'success');
+        setMode('login'); identifierInput.value=email;
+      }catch{ setMessage('Erreur réseau.'); }
+      finally{ mainBtn.disabled=false; mainBtn.textContent='Créer mon compte'; }
     }
-    container.innerHTML = leads.map(l => `
-      <div class="lead-row">
-        <span class="company">${l.companyName || '—'}</span>
-        <span class="stage-badge">${l.stage || '—'}</span>
-        <span class="deal">${l.dealValue ? '$' + l.dealValue.toLocaleString() : '—'}</span>
-      </div>
-    `).join('');
-  }
 
-  function renderLeaderboard(data) {
-    const container = document.getElementById('leaderboardContainer');
-    if (!data || data.length === 0) {
-      container.innerHTML = '<div class="empty">No team data yet</div>';
-      return;
+    async function login(){
+      const identifier=identifierInput.value.trim();
+      const password=document.getElementById('password').value;
+      if(!identifier || !password){ setMessage('Saisissez email/téléphone et mot de passe.'); return; }
+      mainBtn.disabled=true; mainBtn.textContent='Connexion...';
+      try{
+        const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier,password})});
+        const data=await res.json(); if(!res.ok){
+          if (res.status === 403) { setMessage('Compte non vérifié. Vérifiez votre email OTP.'); return; }
+          setMessage(data.error || 'Connexion échouée.'); return;
+        }
+        localStorage.setItem('crm_user', JSON.stringify(data));
+        window.location.href=roleRouteMap[String(data.role||'').toUpperCase()] || '/pages/dashboard.html';
+      }catch{ setMessage('Erreur réseau, réessayez.'); }
+      finally{ mainBtn.disabled=false; mainBtn.textContent='Se connecter'; }
     }
-    const medals = ['🥇', '🥈', '🥉'];
-    container.innerHTML = data.map((m, i) => `
-      <div class="member-row">
-        <span>${medals[i] || '•'} ${m.name || '—'}</span>
-        <span class="score">${m.score ?? '—'}</span>
-      </div>
-    `).join('');
-  }
 
-  function renderAlerts(data) {
-    const container = document.getElementById('alertsContainer');
-    if (!data || data.length === 0) {
-      container.innerHTML = '<div class="empty">No alerts</div>';
-      return;
+    
+    async function forgotPassword(){
+      const identifier=identifierInput.value.trim();
+      if(!identifier){ setMessage('Saisissez votre email ou téléphone pour récupérer le mot de passe.'); return; }
+      mainBtn.disabled=true; forgotBtn.disabled=true;
+      try{
+        const res=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier})});
+        const data=await res.json();
+        if(!res.ok){ setMessage(data.error || 'Réinitialisation échouée.'); return; }
+        if(data.devTemporaryPassword){
+          setMessage(`Mot de passe temporaire (dev): ${data.devTemporaryPassword}`, 'success');
+        } else {
+          setMessage('Instructions envoyées vers votre email.', 'success');
+        }
+      }catch{ setMessage('Erreur réseau pendant la réinitialisation.'); }
+      finally{ mainBtn.disabled=false; forgotBtn.disabled=false; }
     }
-    container.innerHTML = data.map(a => `
-      <div class="alert-row">
-        <div class="alert-dot" style="background:${a.color || '#fbbf24'}"></div>
-        <span>${a.message || '—'}</span>
-      </div>
-    `).join('');
-  }
-
-  // Main fetch function
-  async function loadDashboard() {
-    showSkeleton();
-    updateDate();
-
-    try {
-      const [statsRes, financeRes, alertsRes, leaderboardRes] = await Promise.all([
-        fetch('/api/stats').catch(e => ({ ok: false, error: e })),
-        fetch('/api/finance').catch(e => ({ ok: false, error: e })),
-        fetch('/api/alerts').catch(e => ({ ok: false, error: e })),
-        fetch('/api/leaderboard').catch(e => ({ ok: false, error: e }))
-      ]);
-
-      let stats = {}, finance = {}, alerts = [], leaderboard = [];
-
-      if (statsRes.ok) stats = await statsRes.json();
-      else throw new Error('Stats API failed');
-
-      if (financeRes.ok) finance = await financeRes.json();
-      else throw new Error('Finance API failed');
-
-      if (alertsRes.ok) alerts = await alertsRes.json();
-      if (leaderboardRes.ok) leaderboard = await leaderboardRes.json();
-
-      renderStats(stats);
-      renderPipeline(stats.stageStats || []);
-      renderFinance(finance);
-      renderRecentLeads(stats.recentLeads || []);
-      renderLeaderboard(leaderboard);
-      renderAlerts(alerts);
-
-    } catch (err) {
-      console.error('Dashboard load error:', err);
-      showError('Failed to load dashboard data. Please refresh the page.');
-    }
-  }
-
-  // Start loading
-  loadDashboard();
-</script>
+setMode('login');
+  </script>
 </body>
 </html>

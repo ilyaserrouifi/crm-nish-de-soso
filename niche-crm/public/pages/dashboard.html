@@ -83,7 +83,10 @@
       margin-bottom: 24px;
       cursor: pointer;
     }
-    .sidebar-logo svg { width: 40px; height: 40px; }
+    .brand-mark{width:40px;height:40px;border-radius:999px;background:linear-gradient(160deg,#191c26 0%,#0e1018 55%,#171a24 100%);position:relative;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+    .brand-mark::before{content:'N';font-weight:700;font-size:24px;line-height:1;color:#f4f6ff;font-family:'DM Sans',sans-serif;transform:translateX(-1px)}
+    .brand-mark::after{content:'';position:absolute;width:8px;height:8px;border-radius:50%;background:#2b2fff;right:-2px;top:-2px;box-shadow:0 0 12px rgba(43,47,255,.8)}
+    .logo-text .name{font-size:16px;font-weight:700;letter-spacing:.2px;color:var(--text-primary)}
     .logo-text .name { font-size: 16px; font-weight: 700; color: var(--text); }
     .logo-text .sub { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
     .nav-section { padding: 0 12px; margin-bottom: 24px; }
@@ -339,19 +342,13 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo" onclick="location.href='dashboard.html'">
-    <svg viewBox="0 0 120 120" fill="none">
-      <circle cx="82" cy="22" r="12" fill="#2b2fff"/>
-      <rect x="74" y="34" width="4" height="56" rx="2" fill="white"/>
-      <text x="80" y="90" font-family="Georgia, serif" font-size="28" font-weight="700" fill="white">che</text>
-      <ellipse cx="36" cy="66" rx="28" ry="40" fill="white"/>
-      <path d="M22 42L22 90L33 90L33 62L48 90L52 90L52 42L41 42L41 68L27 42Z" fill="#0b0b0e"/>
-    </svg>
+    <div class="brand-mark" aria-hidden="true"></div>
     <div class="logo-text"><div class="name">Niche</div><div class="sub">CRM Platform</div></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">MAIN</div>
     <a href="dashboard.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.3"/></svg>Dashboard</a>
-    <a href="leads.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="18" rx="1.5" fill="currentColor"/><rect x="10" y="3" width="5" height="12" rx="1.5" fill="currentColor"/><rect x="17" y="3" width="5" height="15" rx="1.5" fill="currentColor"/></svg>Pipeline</a>
+    <a href="pipeline.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="18" rx="1.5" fill="currentColor"/><rect x="10" y="3" width="5" height="12" rx="1.5" fill="currentColor"/><rect x="17" y="3" width="5" height="15" rx="1.5" fill="currentColor"/></svg>Pipeline</a>
   </div>
   <div class="nav-section">
     <div class="nav-label">PEOPLE</div>
@@ -363,6 +360,7 @@
   <div class="nav-section">
     <div class="nav-label">WORK</div>
     <a href="tasks.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3 5-6" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>Tasks</a>
+    <a href="projects.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 4V2.8A1.8 1.8 0 019.8 1h4.4A1.8 1.8 0 0116 2.8V4" stroke="currentColor" stroke-width="1.8"/></svg>Projects</a>
     <a href="finance.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 6v12M9 9.5c0-1.1.9-2 2-2h2a2 2 0 010 4h-2a2 2 0 000 4h2a2 2 0 002-2" stroke="currentColor" stroke-width="1.8"/></svg>Finance</a>
     <a href="analytics.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="14" width="4" height="7" rx="1" fill="currentColor"/><rect x="10" y="9" width="4" height="12" rx="1" fill="currentColor"/><rect x="17" y="4" width="4" height="17" rx="1" fill="currentColor"/></svg>Analytics</a>
   </div>
@@ -377,6 +375,7 @@
   </div>
   <div class="content" id="app">
     <div class="stats-grid" id="statsGrid"></div>
+    <div class="three-col" id="executiveGrid"></div>
     <div class="pipeline-scroll" id="pipelineContainer"></div>
     <div class="two-col"><div class="card" id="financeCard"><div class="card-title">💰 FINANCE SNAPSHOT</div><div id="financeContainer"></div></div><div class="card" id="recentLeadsCard"><div class="card-title">📋 RECENT LEADS</div><div id="recentLeadsContainer"></div></div></div>
     <div class="two-col"><div class="card" id="leaderboardCard"><div class="card-title">🏆 TEAM LEADERBOARD</div><div id="leaderboardContainer"></div></div><div class="card" id="alertsCard"><div class="card-title">🔔 ACTIVE ALERTS</div><div id="alertsContainer"></div></div></div>
@@ -393,6 +392,7 @@
   let alertsData = [];
   let leaderboardData = [];
   let callersData = [];
+  let clientsData = [];
 
   function showToast(msg) {
     const toast = document.createElement('div');
@@ -416,6 +416,7 @@
     document.getElementById('alertsContainer').innerHTML = '<div class="skeleton" style="height:120px"></div>';
     document.getElementById('analyticsGrid').innerHTML = Array(3).fill(`<div class="skeleton" style="height:120px; border-radius:14px"></div>`).join('');
     document.getElementById('topCountries').innerHTML = '<div class="skeleton" style="height:200px"></div>';
+    document.getElementById('executiveGrid').innerHTML = Array(3).fill(`<div class="card"><div class="skeleton" style="height:120px"></div></div>`).join('');
   }
 
   // Fetch APIs
@@ -443,6 +444,17 @@
     catch (e) { callersData = []; }
   }
 
+
+  async function fetchClients() {
+    try {
+      const res = await fetch('/api/clients');
+      if (!res.ok) throw new Error();
+      clientsData = await res.json();
+    } catch (e) {
+      clientsData = [];
+    }
+  }
+
   // Render functions
   function renderStats() {
     document.getElementById('statsGrid').innerHTML = `
@@ -450,6 +462,51 @@
       <div class="stat-card"><div class="stat-value" style="color:#a78bfa">${statsData?.totalClients ?? 0}</div><div class="stat-label">🏢 ACTIVE CLIENTS</div></div>
       <div class="stat-card"><div class="stat-value" style="color:#4ade80">${statsData?.activeTasks ?? 0}</div><div class="stat-label">✓ ACTIVE TASKS</div></div>
       <div class="stat-card"><div class="stat-value" style="color:#fbbf24">${formatCurrency(statsData?.totalRevenue ?? 0)}</div><div class="stat-label">💰 REVENUE</div></div>
+    `;
+  }
+
+
+  function renderExecutiveSummary() {
+    const stageMap = {};
+    (statsData?.stageStats || []).forEach(s => { stageMap[s.stage] = s._count || 0; });
+
+    const leads = stageMap.LEAD || 0;
+    const contacted = stageMap.CONTACTED || 0;
+    const meeting = stageMap.MEETING_BOOKED || 0;
+    const proposal = stageMap.PROPOSAL_SENT || 0;
+    const won = stageMap.CLOSED_WON || 0;
+
+    const winRate = leads > 0 ? (won / leads) * 100 : 0;
+    const thisMonthPipeline = (statsData?.recentLeads || []).reduce((sum, l) => sum + (l.dealValue || 0), 0);
+    const totalPipeline = thisMonthPipeline + ((stageMap.NEGOTIATING || 0) * 1000);
+    const atRiskPipeline = (stageMap.NEGOTIATING || 0) * 1000;
+
+    const topPerformer = leaderboardData?.[0]?.name || '—';
+    const needsAttention = leaderboardData?.length
+      ? (leaderboardData.find(p => (p.score || '').toUpperCase() === 'D')?.name || leaderboardData[leaderboardData.length - 1]?.name || '—')
+      : '—';
+
+    document.getElementById('executiveGrid').innerHTML = `
+      <div class="card"><div class="card-title">TODAY'S NUMBERS</div>
+        <div class="finance-row"><span class="finance-label">Calls Made</span><span>${callersData.reduce((s,c)=>s+(c.callsMade||0),0)}</span></div>
+        <div class="finance-row"><span class="finance-label">Meetings Booked</span><span>${callersData.reduce((s,c)=>s+(c.meetingsBooked||0),0)}</span></div>
+        <div class="finance-row"><span class="finance-label">Deals Closed</span><span>${won}</span></div>
+        <div class="finance-row"><span class="finance-label">Revenue Today</span><span>${formatCurrency(statsData?.totalRevenue || 0)}</span></div>
+      </div>
+
+      <div class="card"><div class="card-title">PIPELINE VALUE</div>
+        <div class="finance-row"><span class="finance-label">Total</span><span>${formatCurrency(totalPipeline)}</span></div>
+        <div class="finance-row"><span class="finance-label">This Month</span><span>${formatCurrency(thisMonthPipeline)}</span></div>
+        <div class="finance-row"><span class="finance-label">At Risk</span><span class="finance-value amber">${formatCurrency(atRiskPipeline)}</span></div>
+        <div class="finance-row"><span class="finance-label">Lead → Won</span><span>${formatPct(winRate)}</span></div>
+      </div>
+
+      <div class="card"><div class="card-title">TEAM PERFORMANCE</div>
+        <div class="finance-row"><span class="finance-label">Top Performer</span><span>${escapeHtml(topPerformer)}</span></div>
+        <div class="finance-row"><span class="finance-label">Needs Attention</span><span class="finance-value red">${escapeHtml(needsAttention)}</span></div>
+        <div class="finance-row"><span class="finance-label">Active Alerts</span><span>${alertsData.length}</span></div>
+        <div class="finance-row"><span class="finance-label">Meeting Stage</span><span>${meeting}</span></div>
+      </div>
     `;
   }
 
@@ -472,7 +529,7 @@
       <div class="finance-row"><span class="finance-label">MRR</span><span class="finance-value green">${formatCurrency(financeData?.mrr ?? 0)}</span></div>
       <div class="finance-row"><span class="finance-label">Total Expenses</span><span class="finance-value red">${formatCurrency(financeData?.totalExpenses ?? 0)}</span></div>
       <div class="finance-row"><span class="finance-label">Net Profit</span><span class="finance-value">${formatCurrency(financeData?.netProfit ?? 0)}</span></div>
-      <div class="finance-row"><span class="finance-label">Pending Invoices</span><span class="finance-value amber">${formatCurrency(0)}</span></div>
+      <div class="finance-row"><span class="finance-label">Pending Invoices</span><span class="finance-value amber">${financeData?.pendingInvoicesCount ?? 'N/A'}</span></div>
     `;
   }
 
@@ -504,69 +561,124 @@
   }
 
   function renderAnalytics() {
-    const totalCallsToday = callersData.reduce((sum, c) => sum + (c.callsToday || 0), 0);
-    const activeCallers = callersData.filter(c => c.status === 'active').length || 1;
-    const avgCalls = Math.round(totalCallsToday / activeCallers);
-    const totalLeads = statsData?.totalLeads || 1;
+    const totalCallsToday = callersData.reduce((sum, c) => sum + (c.callsMade || 0), 0);
+    const activeCallers = callersData.filter(c => (c.status || '').toLowerCase() === 'active').length;
+    const avgCalls = activeCallers ? Math.round(totalCallsToday / activeCallers) : 0;
+    const totalLeads = statsData?.totalLeads || 0;
     const closedWon = (statsData?.stageStats || []).find(s => s.stage === 'CLOSED_WON')?._count || 0;
-    const convRate = (closedWon / totalLeads * 100);
+    const meetingsBooked = callersData.reduce((sum, c) => sum + (c.meetingsBooked || 0), 0);
+    const convRate = totalLeads > 0 ? (closedWon / totalLeads * 100) : 0;
     const mrr = financeData?.mrr || 0;
     document.getElementById('analyticsGrid').innerHTML = `
-      <div class="card analytics-card"><div class="card-title">📈 MRR GROWTH</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">+0% this month</div><svg class="sparkline-svg" viewBox="0 0 200 52" preserveAspectRatio="none"><path d="M0,42 C25,38 45,22 70,26 C95,30 115,12 140,16 C162,20 178,8 200,5" fill="none" stroke="#2b2fff" stroke-width="2"/><path d="M0,42 C25,38 45,22 70,26 C95,30 115,12 140,16 C162,20 178,8 200,5 L200,52 L0,52 Z" fill="url(#gradSpark)"/></svg></div>
-      <div class="card analytics-card"><div class="card-title">📞 CALLS / DAY</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">avg this week</div><div class="bar-chart" id="barChart"></div></div>
-      <div class="card analytics-card"><div class="card-title">🎯 CONVERSION RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">leads → closed</div><svg class="sparkline-svg" viewBox="0 0 200 52" preserveAspectRatio="none"><path d="M0,46 C30,40 55,28 85,18 C115,8 145,14 175,7 C185,5 193,4 200,3" fill="none" stroke="#4ade80" stroke-width="2"/><path d="M0,46 C30,40 55,28 85,18 C115,8 145,14 175,7 C185,5 193,4 200,3 L200,52 L0,52 Z" fill="url(#gradGreen)"/></svg></div>
+      <div class="card analytics-card"><div class="card-title">📈 CURRENT MRR</div><div class="analytics-value">${formatCurrency(mrr)}</div><div class="analytics-sub">Live total from active client contracts</div></div>
+      <div class="card analytics-card"><div class="card-title">📞 AVG CALLS / ACTIVE CALLER</div><div class="analytics-value">${avgCalls}</div><div class="analytics-sub">Computed from total calls and active callers</div></div>
+      <div class="card analytics-card"><div class="card-title">🎯 CLOSED-WON RATE</div><div class="analytics-value">${formatPct(convRate)}</div><div class="analytics-sub">${closedWon} won / ${totalLeads} total leads · Meetings booked: ${meetingsBooked}</div></div>
     `;
-    const barHeights = [22, 42, 24, 46, 34, 20, 40];
-    const barContainer = document.getElementById('barChart');
-    if (barContainer) barContainer.innerHTML = barHeights.map(h => `<div class="bar" style="height:${h}px"></div>`).join('');
+  }
+
+  function countryFlag(codeOrName) {
+    const byName = {
+      'united states': 'US', 'united kingdom': 'GB', canada: 'CA', australia: 'AU', germany: 'DE',
+      france: 'FR', spain: 'ES', italy: 'IT', morocco: 'MA', uae: 'AE', 'united arab emirates': 'AE'
+    };
+    const raw = String(codeOrName || '').trim();
+    const code = raw.length === 2 ? raw.toUpperCase() : (byName[raw.toLowerCase()] || '');
+    if (!code || code.length !== 2) return '🌍';
+    return String.fromCodePoint(...[...code].map(c => 127397 + c.charCodeAt(0)));
+  }
+
+  function getCountryDistribution() {
+    const map = {};
+    clientsData.forEach(c => {
+      const key = (c.country || 'Unknown').trim() || 'Unknown';
+      map[key] = (map[key] || 0) + 1;
+    });
+    const entries = Object.entries(map).map(([name, count]) => ({ name, count }));
+    entries.sort((a, b) => b.count - a.count);
+    return entries;
   }
 
   function renderTopCountries() {
-    const countries = [
-      { flag: '🇺🇸', name: 'United States', pct: 72 },
-      { flag: '🇬🇧', name: 'United Kingdom', pct: 48 },
-      { flag: '🇨🇦', name: 'Canada', pct: 35 },
-      { flag: '🇦🇺', name: 'Australia', pct: 28 },
-      { flag: '🇩🇪', name: 'Germany', pct: 20 },
-      { flag: '🇦🇪', name: 'UAE', pct: 15 }
-    ];
+    const dist = getCountryDistribution().slice(0, 8);
     const container = document.getElementById('topCountries');
-    container.innerHTML = countries.map(c => `
-      <div class="country-row"><span class="country-flag">${c.flag}</span><span class="country-name">${c.name}</span><div class="country-bar-bg"><div class="country-bar-fill" data-width="${c.pct}%"></div></div><span class="country-percent">${c.pct}%</span></div>
-    `).join('');
+    if (!dist.length) {
+      container.innerHTML = '<div class="empty-state">No client location data yet</div>';
+      return;
+    }
+    const max = dist[0].count || 1;
+    container.innerHTML = dist.map(c => {
+      const pct = Math.round((c.count / max) * 100);
+      return `
+      <div class="country-row"><span class="country-flag">${countryFlag(c.name)}</span><span class="country-name">${escapeHtml(c.name)}</span><div class="country-bar-bg"><div class="country-bar-fill" data-width="${pct}%"></div></div><span class="country-percent">${c.count}</span></div>
+    `}).join('');
     setTimeout(() => { document.querySelectorAll('.country-bar-fill').forEach(bar => { bar.style.width = bar.dataset.width; }); }, 300);
   }
 
   let mapInitialized = false;
-  function initMap() {
+  const geoCache = new Map();
+
+  async function geocodeCountry(countryName) {
+    const key = String(countryName || '').trim().toLowerCase();
+    if (!key || key === 'unknown') return null;
+    if (geoCache.has(key)) return geoCache.get(key);
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(countryName)}`;
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error('Geocoding failed');
+      const rows = await res.json();
+      const item = rows?.[0];
+      const coords = item ? [Number(item.lat), Number(item.lon)] : null;
+      geoCache.set(key, coords);
+      return coords;
+    } catch (err) {
+      geoCache.set(key, null);
+      return null;
+    }
+  }
+
+  async function initMap() {
     if (mapInitialized || typeof L === 'undefined') { setTimeout(initMap, 300); return; }
     const mapContainer = document.getElementById('leafletMap');
     if (!mapContainer) return;
+
+    const dist = getCountryDistribution().filter(r => r.name.toLowerCase() !== 'unknown');
     const map = L.map('leafletMap').setView([20, 10], 2);
     map.attributionControl.setPrefix(false);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(map);
-    const regions = [
-      { lat: 37.09, lng: -95.71, label: 'USA', leads: 72, color: '#2b2fff' },
-      { lat: 51.50, lng: -0.12, label: 'UK', leads: 48, color: '#4f5aff' },
-      { lat: 56.13, lng: -106.3, label: 'Canada', leads: 35, color: '#2b2fff' },
-      { lat: -25.3, lng: 133.8, label: 'Australia', leads: 28, color: '#2b2fff' },
-      { lat: 51.16, lng: 10.45, label: 'Germany', leads: 20, color: '#4f5aff' },
-      { lat: 23.42, lng: 53.85, label: 'UAE', leads: 15, color: '#2b2fff' }
-    ];
-    regions.forEach(r => {
-      const size = Math.max(12, Math.min(28, r.leads / 3));
-      const marker = L.circleMarker([r.lat, r.lng], { radius: size, color: r.color, weight: 2, opacity: 0.8, fillOpacity: 0.6, fillColor: r.color }).addTo(map);
-      marker.bindPopup(`<b>${r.label}</b><br/>${r.leads}% of leads`);
-    });
+
+    if (!dist.length) {
+      mapInitialized = true;
+      return;
+    }
+
+    const max = dist[0]?.count || 1;
+    const markerLatLngs = [];
+
+    for (const r of dist) {
+      const center = await geocodeCountry(r.name);
+      if (!center) continue;
+      const pct = Math.round((r.count / max) * 100);
+      const size = Math.max(8, Math.min(26, 6 + r.count * 1.5));
+      const marker = L.circleMarker(center, { radius: size, color: '#2b2fff', weight: 2, opacity: 0.8, fillOpacity: 0.6, fillColor: '#4f5aff' }).addTo(map);
+      marker.bindPopup(`<b>${escapeHtml(r.name)}</b><br/>${r.count} client(s)<br/>${pct}% vs top country`);
+      markerLatLngs.push(center);
+    }
+
+    if (markerLatLngs.length) {
+      map.fitBounds(markerLatLngs, { padding: [30, 30] });
+    }
+
     mapInitialized = true;
   }
+
 
   function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 
   async function loadDashboard() {
     showSkeletons();
-    await Promise.all([fetchStats(), fetchFinance(), fetchAlerts(), fetchLeaderboard(), fetchCallers()]);
-    renderStats(); renderPipeline(); renderFinance(); renderRecentLeads(); renderLeaderboard(); renderAlerts(); renderAnalytics(); renderTopCountries();
+    await Promise.all([fetchStats(), fetchFinance(), fetchAlerts(), fetchLeaderboard(), fetchCallers(), fetchClients()]);
+    renderStats(); renderExecutiveSummary(); renderPipeline(); renderFinance(); renderRecentLeads(); renderLeaderboard(); renderAlerts(); renderAnalytics(); renderTopCountries();
     initMap();
   }
 

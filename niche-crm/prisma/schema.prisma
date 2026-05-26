@@ -8,12 +8,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      String   @default("FREELANCER")
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String
+  role          String         @default("FREELANCER")
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?
+  oauthAccounts OAuthAccount[]
 }
 
 model Lead {
@@ -112,6 +114,8 @@ model Client {
   email     String
   phone     String?
   niche     String?
+  country   String?
+  city      String?
   mrr       Float     @default(0)
   status    String    @default("active")
   createdAt DateTime  @default(now())
@@ -134,18 +138,18 @@ model Project {
 }
 
 model Task {
-  id              String     @id @default(cuid())
+  id              String      @id @default(cuid())
   projectId       String
-  project         Project    @relation(fields: [projectId], references: [id])
+  project         Project     @relation(fields: [projectId], references: [id])
   freelancerId    String?
   freelancer      Freelancer? @relation(fields: [freelancerId], references: [id])
   name            String
-  priority        String     @default("MEDIUM")
-  status          String     @default("TODO")
+  priority        String      @default("MEDIUM")
+  status          String      @default("TODO")
   deadline        DateTime?
-  visibleToClient Boolean    @default(false)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  visibleToClient Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model Invoice {
@@ -162,13 +166,16 @@ model Invoice {
 }
 
 model Expense {
-  id        String   @id @default(cuid())
-  category  String
-  amount    Float
-  date      DateTime
-  vendor    String
-  recurring Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  category      String
+  amount        Float
+  date          DateTime
+  vendor        String
+  recurring     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?   @relation(fields: [userProfileId], references: [id])
+  oauthAccounts OAuthAccount[]
+  userProfileId String?
 }
 
 model ColdCaller {
@@ -206,7 +213,6 @@ model Income {
   updatedAt DateTime @updatedAt
 }
 
-
 model Investment {
   id          String   @id @default(cuid())
   name        String
@@ -217,4 +223,84 @@ model Investment {
   status      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model PipelineHistory {
+  id            String         @id @default(cuid())
+  leadId        String
+  fromStage     String
+  toStage       String
+  note          String?
+  actor         String         @default("system")
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?   @relation(fields: [userProfileId], references: [id])
+  oauthAccounts OAuthAccount[]
+  userProfileId String?
+}
+
+model AutomationEvent {
+  id            String         @id @default(cuid())
+  type          String
+  leadId        String?
+  company       String?
+  status        String         @default("PENDING")
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?   @relation(fields: [userProfileId], references: [id])
+  oauthAccounts OAuthAccount[]
+  userProfileId String?
+}
+
+model ClientPortalMessage {
+  id            String   @id @default(cuid())
+  clientId      String
+  senderRole    String
+  senderName    String
+  message       String
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+}
+
+model UserProfile {
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone           String?
+  avatarUrl       String?
+  timezone        String?
+  emailVerifiedAt DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Expense         Expense[]
+  PipelineHistory PipelineHistory[]
+  AutomationEvent AutomationEvent[]
+}
+
+model OAuthAccount {
+  id                String           @id @default(cuid())
+  userId            String
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          String
+  providerUserId    String
+  accessToken       String?
+  refreshToken      String?
+  createdAt         DateTime         @default(now())
+  Expense           Expense?         @relation(fields: [expenseId], references: [id])
+  expenseId         String?
+  PipelineHistory   PipelineHistory? @relation(fields: [pipelineHistoryId], references: [id])
+  pipelineHistoryId String?
+  AutomationEvent   AutomationEvent? @relation(fields: [automationEventId], references: [id])
+  automationEventId String?
+
+  @@unique([provider, providerUserId])
+}
+
+model EmailVerificationCode {
+  id         String    @id @default(cuid())
+  email      String
+  code       String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([email, createdAt])
 }
