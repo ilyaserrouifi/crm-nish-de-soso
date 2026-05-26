@@ -56,8 +56,8 @@ export async function POST(req: Request) {
           `
           emailVerifiedAt = matches[0]?.emailVerifiedAt ?? null
         } catch (profileLookupError) {
-          console.error('POST /api/auth/login profile lookup failed', profileLookupError)
-          return NextResponse.json({ error: 'Profile setup missing. Contact support.' }, { status: 500 })
+          console.error('POST /api/auth/login profile lookup warning', profileLookupError)
+          emailVerifiedAt = null
         }
       }
     } else {
