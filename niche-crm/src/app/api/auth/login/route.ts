@@ -11,7 +11,13 @@ type LoginPayload = {
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get('x-forwarded-for') ?? 'local'
+    if (!process.env.DATABASE_URL) {
+      console.error('POST /api/auth/login failed: DATABASE_URL is missing')
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+    }
+
+    const forwardedFor = req.headers.get('x-forwarded-for')
+    const ip = forwardedFor?.split(',')[0]?.trim() || 'local'
     const rl = checkRateLimit(`login:${ip}`, 20, 10 * 60 * 1000)
     if (!rl.allowed) {
       return NextResponse.json({ error: 'Too many login attempts. Please retry later.' }, { status: 429 })
@@ -70,7 +76,7 @@ export async function POST(req: Request) {
     }
 
     if (!emailVerifiedAt) {
-      return NextResponse.json({ error: 'Please verify your email before login' }, { status: 403 })
+      return NextResponse.json({ error: 'Please verify your email before login' }, { status: 401 })
     }
 
     const valid = await bcrypt.compare(body.password, user.password)
@@ -82,8 +88,9 @@ export async function POST(req: Request) {
     const response = NextResponse.json({ id: user.id, name: user.name, email: user.email, role: user.role })
     response.cookies.set('crm_session', token, { httpOnly: true, secure: true, sameSite: 'lax', path: '/' })
     return response
-  } catch (error) {
-    console.error('POST /api/auth/login failed', error)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'unknown error'
+    console.error('POST /api/auth/login failed', { message })
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
