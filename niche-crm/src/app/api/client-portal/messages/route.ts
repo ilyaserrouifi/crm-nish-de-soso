@@ -10,6 +10,16 @@ type Body = {
   attachmentUrl?: unknown
 }
 
+type MessageRow = {
+  id: string
+  clientId: string
+  senderRole: string
+  senderName: string
+  message: string
+  attachmentUrl: string | null
+  createdAt: Date
+}
+
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const clientId = url.searchParams.get('clientId')
@@ -19,7 +29,13 @@ export async function GET(req: Request) {
   }
 
   try {
-    const rows = await prisma.clientPortalMessage.findMany({ where: { clientId }, orderBy: { createdAt: 'desc' }, take: 200 })
+    const rows = await prisma.$queryRaw<MessageRow[]>`
+      SELECT id, "clientId", "senderRole", "senderName", message, "attachmentUrl", "createdAt"
+      FROM "ClientPortalMessage"
+      WHERE "clientId" = ${clientId}
+      ORDER BY "createdAt" DESC
+      LIMIT 200
+    `
     return NextResponse.json(rows)
   } catch {
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
@@ -39,17 +55,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Only CLIENT and PROJECT_MANAGER messages are allowed' }, { status: 403 })
     }
 
-    const row = await prisma.clientPortalMessage.create({
-      data: {
-        clientId: body.clientId,
-        senderRole: role,
-        senderName: body.senderName,
-        message: body.message,
-        attachmentUrl: isNonEmptyString(body.attachmentUrl) ? body.attachmentUrl : null,
-      },
-    })
+    const attachmentUrl = isNonEmptyString(body.attachmentUrl) ? body.attachmentUrl : null
 
-    return NextResponse.json(row, { status: 201 })
+    const row = await prisma.$queryRaw<MessageRow[]>`
+      INSERT INTO "ClientPortalMessage" ("clientId", "senderRole", "senderName", message, "attachmentUrl")
+      VALUES (${body.clientId}, ${role}, ${body.senderName}, ${body.message}, ${attachmentUrl})
+      RETURNING id, "clientId", "senderRole", "senderName", message, "attachmentUrl", "createdAt"
+    `
+
+    return NextResponse.json(row[0], { status: 201 })
   } catch {
     return NextResponse.json({ error: 'Failed to create message' }, { status: 500 })
   }
