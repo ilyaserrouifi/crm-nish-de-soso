@@ -9,8 +9,6 @@ type LoginPayload = {
   password: unknown
 }
 
-type UserRow = { id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }
-
 export async function POST(req: Request) {
   try {
     const ip = req.headers.get('x-forwarded-for') ?? 'local'
@@ -32,22 +30,32 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Use a valid email or phone number' }, { status: 400 })
     }
 
-    const normalizedPhone = identifierIsPhone ? normalizePhone(identifier) : null
+    let user: { id: string; name: string; email: string; role: string; password: string } | null = null
+    let emailVerifiedAt: Date | null = null
 
-    const users = await prisma.$queryRaw<UserRow[]>`
-      SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
-      FROM "User" u
-      LEFT JOIN "UserProfile" p ON p."userId" = u.id
-      WHERE u.email = ${identifier.toLowerCase()} OR p.phone = ${normalizedPhone}
-      LIMIT 1
-    `
+    if (identifierIsEmail) {
+      user = await prisma.user.findUnique({ where: { email: identifier.toLowerCase() } })
+      if (user) {
+        const profile = await prisma.userProfile.findUnique({ where: { userId: user.id } })
+        emailVerifiedAt = profile?.emailVerifiedAt ?? null
+      }
+    } else {
+      const normalizedPhone = normalizePhone(identifier)
+      const profile = await prisma.userProfile.findFirst({
+        where: { phone: normalizedPhone },
+        include: { user: true },
+      })
+      if (profile?.user) {
+        user = profile.user
+        emailVerifiedAt = profile.emailVerifiedAt ?? null
+      }
+    }
 
-    const user = users[0]
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    if (!user.emailVerifiedAt) {
+    if (!emailVerifiedAt) {
       return NextResponse.json({ error: 'Please verify your email before login' }, { status: 403 })
     }
 

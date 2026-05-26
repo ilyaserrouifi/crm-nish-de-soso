@@ -177,6 +177,7 @@
       <p class="hint" id="passwordHint" style="display:none;">Password fort: 10+ caractères avec majuscule, minuscule, chiffre, symbole.</p>
 
       <button class="btn btn-primary" id="mainBtn">Se connecter</button>
+      <button class="btn btn-secondary" id="forgotBtn" type="button" style="margin-top:10px;">Mot de passe oublié ?</button>
 
       <div class="divider">ou continuer avec</div>
       <button class="btn btn-secondary" id="googleBtn" type="button">Google</button>
@@ -199,6 +200,7 @@
     const mainBtn = document.getElementById('mainBtn');
     const avatarInput = document.getElementById('avatar');
     const avatarPreview = document.getElementById('avatarPreview');
+    const forgotBtn = document.getElementById('forgotBtn');
     let mode='login';
     let avatarDataUrl='';
 
@@ -216,6 +218,7 @@
       titleEl.textContent = signup ? 'Inscription' : 'Connexion';
       subtitleEl.textContent = signup ? 'Créez votre profil en quelques secondes.' : 'Accédez avec email ou téléphone.';
       mainBtn.textContent = signup ? 'Créer mon compte' : 'Se connecter';
+      forgotBtn.style.display = signup ? 'none' : 'block';
       tabSignup.style.borderColor = signup ? 'var(--blue-hover)' : 'var(--border-subtle)';
       tabLogin.style.borderColor = !signup ? 'var(--blue-hover)' : 'var(--border-subtle)';
       identifierInput.placeholder = signup ? 'you@company.com' : 'you@company.com ou +212612345678';
@@ -240,6 +243,7 @@
       window.location.href=data.authUrl;
     });
     mainBtn.addEventListener('click', submitForm);
+    forgotBtn.addEventListener('click', forgotPassword);
 
     async function submitForm(){
       if(mode==='signup') return signup();
@@ -271,14 +275,34 @@
       mainBtn.disabled=true; mainBtn.textContent='Connexion...';
       try{
         const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier,password})});
-        const data=await res.json(); if(!res.ok){ setMessage(data.error || 'Connexion échouée.'); return; }
+        const data=await res.json(); if(!res.ok){
+          if (res.status === 403) { setMessage('Compte non vérifié. Vérifiez votre email OTP.'); return; }
+          setMessage(data.error || 'Connexion échouée.'); return;
+        }
         localStorage.setItem('crm_user', JSON.stringify(data));
         window.location.href=roleRouteMap[String(data.role||'').toUpperCase()] || '/pages/dashboard.html';
       }catch{ setMessage('Erreur réseau, réessayez.'); }
       finally{ mainBtn.disabled=false; mainBtn.textContent='Se connecter'; }
     }
 
-    setMode('login');
+    
+    async function forgotPassword(){
+      const identifier=identifierInput.value.trim();
+      if(!identifier){ setMessage('Saisissez votre email ou téléphone pour récupérer le mot de passe.'); return; }
+      mainBtn.disabled=true; forgotBtn.disabled=true;
+      try{
+        const res=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier})});
+        const data=await res.json();
+        if(!res.ok){ setMessage(data.error || 'Réinitialisation échouée.'); return; }
+        if(data.devTemporaryPassword){
+          setMessage(`Mot de passe temporaire (dev): ${data.devTemporaryPassword}`, 'success');
+        } else {
+          setMessage('Instructions envoyées vers votre email.', 'success');
+        }
+      }catch{ setMessage('Erreur réseau pendant la réinitialisation.'); }
+      finally{ mainBtn.disabled=false; forgotBtn.disabled=false; }
+    }
+setMode('login');
   </script>
 </body>
 </html>
