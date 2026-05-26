@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
-import { isNonEmptyString } from '@/lib/validation'
+import { isNonEmptyString, isValidEmail, isValidPhone, normalizePhone } from '@/lib/validation'
 import { checkRateLimit } from '@/lib/auth-security'
 
 type LoginPayload = {
-  email: unknown
+  identifier: unknown
   password: unknown
 }
 
-type VerificationRow = { emailVerifiedAt: Date | null }
+type UserRow = { id: string; name: string; email: string; role: string; password: string; emailVerifiedAt: Date | null }
 
 export async function POST(req: Request) {
   try {
@@ -20,30 +20,38 @@ export async function POST(req: Request) {
     }
 
     const body = (await req.json()) as LoginPayload
-
-    if (!isNonEmptyString(body.email) || !isNonEmptyString(body.password)) {
-      return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
+    if (!isNonEmptyString(body.identifier) || !isNonEmptyString(body.password)) {
+      return NextResponse.json({ error: 'Identifier and password required' }, { status: 400 })
     }
 
-    const user = await prisma.user.findUnique({ where: { email: body.email.toLowerCase() } })
+    const identifier = body.identifier.trim()
+    const identifierIsEmail = isValidEmail(identifier)
+    const identifierIsPhone = isValidPhone(identifier)
 
+    if (!identifierIsEmail && !identifierIsPhone) {
+      return NextResponse.json({ error: 'Use a valid email or phone number' }, { status: 400 })
+    }
+
+    const normalizedPhone = identifierIsPhone ? normalizePhone(identifier) : null
+
+    const users = await prisma.$queryRaw<UserRow[]>`
+      SELECT u.id, u.name, u.email, u.role, u.password, p."emailVerifiedAt"
+      FROM "User" u
+      LEFT JOIN "UserProfile" p ON p."userId" = u.id
+      WHERE u.email = ${identifier.toLowerCase()} OR p.phone = ${normalizedPhone}
+      LIMIT 1
+    `
+
+    const user = users[0]
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const verified = await prisma.$queryRaw<VerificationRow[]>`
-      SELECT "emailVerifiedAt"
-      FROM "UserProfile"
-      WHERE "userId" = ${user.id}
-      LIMIT 1
-    `
-
-    if (!verified[0]?.emailVerifiedAt) {
+    if (!user.emailVerifiedAt) {
       return NextResponse.json({ error: 'Please verify your email before login' }, { status: 403 })
     }
 
     const valid = await bcrypt.compare(body.password, user.password)
-
     if (!valid) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }

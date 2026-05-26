@@ -11,6 +11,7 @@ type SignupPayload = {
   phone?: unknown
   timezone?: unknown
   role?: unknown
+  avatarUrl?: unknown
 }
 
 const ALLOWED_ROLES = new Set(['ADMIN', 'FINANCE', 'PROJECT_MANAGER', 'CLIENT', 'FREELANCER'])
@@ -61,9 +62,11 @@ export async function POST(req: Request) {
       select: { id: true, email: true, name: true, role: true },
     })
 
+    const avatarUrl = isNonEmptyString(body.avatarUrl) ? body.avatarUrl.trim() : null
+
     await prisma.$executeRaw`
-      INSERT INTO "UserProfile" ("userId", phone, timezone)
-      VALUES (${user.id}, ${phone}, ${isNonEmptyString(body.timezone) ? body.timezone : null})
+      INSERT INTO "UserProfile" ("userId", phone, "avatarUrl", timezone)
+      VALUES (${user.id}, ${phone}, ${avatarUrl}, ${isNonEmptyString(body.timezone) ? body.timezone : null})
     `
 
     const otp = generateOtpCode()

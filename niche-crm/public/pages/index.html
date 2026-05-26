@@ -145,177 +145,140 @@
     </section>
 
     <section class="panel auth">
-      <span class="status-pill">Auth unified: static UI -> API routes</span>
-      <h3>Connexion</h3>
-      <p class="muted">Connectez-vous ou créez votre profil en quelques secondes.</p>
+      <span class="status-pill">Secure access</span>
+      <h3 id="formTitle">Connexion</h3>
+      <p class="muted" id="formSubtitle">Accédez avec email ou téléphone.</p>
 
-      <div class="row">
-        <div>
-          <label for="fullName">Nom complet</label>
-          <input id="fullName" type="text" placeholder="Votre nom" />
-        </div>
-        <div>
-          <label for="phone">Téléphone</label>
-          <input id="phone" type="tel" placeholder="+212612345678" />
-          <p class="hint">Format: +212612345678 (8-15 digits)</p>
-        </div>
+      <div class="social" style="margin-top:0;margin-bottom:14px;">
+        <button class="btn btn-secondary" id="tabLogin" type="button">Connexion</button>
+        <button class="btn btn-secondary" id="tabSignup" type="button">Inscription</button>
       </div>
 
-      <label for="email">Email professionnel</label>
-      <input id="email" type="email" placeholder="you@company.com" autocomplete="email" />
+      <div id="signupBlock" style="display:none;">
+        <label>Photo de profil (optionnel)</label>
+        <div class="row" style="grid-template-columns:74px 1fr;align-items:center;">
+          <img id="avatarPreview" src="https://placehold.co/74x74/101322/eef2ff?text=+" alt="avatar" style="width:74px;height:74px;border-radius:999px;object-fit:cover;border:1px solid var(--border-subtle);" />
+          <input id="avatar" type="file" accept="image/*" />
+        </div>
+        <label for="fullName">Nom complet</label>
+        <input id="fullName" type="text" placeholder="Votre nom" />
+      </div>
+
+      <label for="identifier">Email ou téléphone</label>
+      <input id="identifier" type="text" placeholder="you@company.com ou +212612345678" autocomplete="username" />
+
+      <div id="phoneBlock" style="display:none;">
+        <label for="phone">Téléphone</label>
+        <input id="phone" type="tel" placeholder="+212612345678" />
+      </div>
 
       <label for="password">Mot de passe</label>
       <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      <p class="hint">Password fort: 10+ caractères avec majuscule, minuscule, chiffre, symbole.</p>
+      <p class="hint" id="passwordHint" style="display:none;">Password fort: 10+ caractères avec majuscule, minuscule, chiffre, symbole.</p>
 
-      <button class="btn btn-primary" id="loginBtn">Se connecter</button>
+      <button class="btn btn-primary" id="mainBtn">Se connecter</button>
 
       <div class="divider">ou continuer avec</div>
-      <div class="social">
-        <button class="btn btn-secondary" id="googleBtn" type="button">Google</button>
-        <button class="btn btn-secondary" id="signupBtn" type="button">Inscription</button>
-      </div>
+      <button class="btn btn-secondary" id="googleBtn" type="button">Google</button>
 
       <p id="msg" class="msg"></p>
     </section>
   </div>
 
   <script>
-    const roleRouteMap = {
-      ADMIN: '/pages/dashboard.html',
-      FINANCE: '/pages/finance.html',
-      PROJECT_MANAGER: '/pages/projects.html',
-      CLIENT: '/pages/clients.html',
-      FREELANCER: '/pages/tasks.html'
-    };
-
+    const roleRouteMap = { ADMIN:'/pages/dashboard.html', FINANCE:'/pages/finance.html', PROJECT_MANAGER:'/pages/projects.html', CLIENT:'/pages/clients.html', FREELANCER:'/pages/tasks.html' };
     const msgEl = document.getElementById('msg');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const signupBlock = document.getElementById('signupBlock');
+    const phoneBlock = document.getElementById('phoneBlock');
+    const identifierInput = document.getElementById('identifier');
+    const passwordHint = document.getElementById('passwordHint');
+    const titleEl = document.getElementById('formTitle');
+    const subtitleEl = document.getElementById('formSubtitle');
+    const mainBtn = document.getElementById('mainBtn');
+    const avatarInput = document.getElementById('avatar');
+    const avatarPreview = document.getElementById('avatarPreview');
+    let mode='login';
+    let avatarDataUrl='';
 
-    function setMessage(text, tone = 'error') {
-      msgEl.className = tone === 'success' ? 'msg ok' : tone === 'info' ? 'msg info' : 'msg';
-      msgEl.textContent = text;
+    function setMessage(text,tone='error'){ msgEl.className = tone==='success' ? 'msg ok' : tone==='info' ? 'msg info' : 'msg'; msgEl.textContent=text; }
+    function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function normalizePhone(phone){ return phone.replace(/\s+/g,'').replace(/[()-]/g,''); }
+    function isValidPhone(phone){ return /^\+?[0-9]{8,15}$/.test(normalizePhone(phone)); }
+
+    function setMode(next){
+      mode=next;
+      const signup = mode==='signup';
+      signupBlock.style.display = signup ? 'block':'none';
+      phoneBlock.style.display = signup ? 'block':'none';
+      passwordHint.style.display = signup ? 'block':'none';
+      titleEl.textContent = signup ? 'Inscription' : 'Connexion';
+      subtitleEl.textContent = signup ? 'Créez votre profil en quelques secondes.' : 'Accédez avec email ou téléphone.';
+      mainBtn.textContent = signup ? 'Créer mon compte' : 'Se connecter';
+      tabSignup.style.borderColor = signup ? 'var(--blue-hover)' : 'var(--border-subtle)';
+      tabLogin.style.borderColor = !signup ? 'var(--blue-hover)' : 'var(--border-subtle)';
+      identifierInput.placeholder = signup ? 'you@company.com' : 'you@company.com ou +212612345678';
+      setMessage('', 'info');
     }
 
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function isValidPhone(phone) {
-      const normalized = phone.replace(/\s+/g, '').replace(/[()-]/g, '');
-      return /^\+?[0-9]{8,15}$/.test(normalized);
-    }
-    document.getElementById('password').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') login();
+    avatarInput.addEventListener('change', ()=>{
+      const file = avatarInput.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { avatarDataUrl = String(reader.result || ''); avatarPreview.src = avatarDataUrl; };
+      reader.readAsDataURL(file);
     });
-    document.getElementById('loginBtn').addEventListener('click', login);
 
-    document.getElementById('googleBtn').addEventListener('click', async () => {
-      setMessage('', 'info');
-      try {
-        const res = await fetch('/api/auth/google');
-        const data = await res.json();
-        if (!res.ok) {
-          setMessage(data.error || 'Google OAuth indisponible.');
-          return;
-        }
-        window.location.href = data.authUrl;
-      } catch {
-        setMessage('Erreur réseau avec Google OAuth.');
-      }
+    document.getElementById('password').addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitForm(); });
+    tabLogin.addEventListener('click', ()=>setMode('login'));
+    tabSignup.addEventListener('click', ()=>setMode('signup'));
+    document.getElementById('googleBtn').addEventListener('click', async ()=>{
+      setMessage('Connexion Google...', 'info');
+      const res=await fetch('/api/auth/google'); const data=await res.json();
+      if(!res.ok){ setMessage(data.error || 'Google OAuth indisponible.'); return; }
+      window.location.href=data.authUrl;
     });
+    mainBtn.addEventListener('click', submitForm);
 
-    document.getElementById('signupBtn').addEventListener('click', signup);
-
-
-
-    async function signup() {
-      setMessage('', 'info');
-
-      const fullName = document.getElementById('fullName').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-
-      if (!fullName || !phone || !email || !password) {
-        setMessage('Merci de remplir nom, téléphone, email et mot de passe.');
-        return;
-      }
-      if (!isValidEmail(email)) {
-        setMessage('Email invalide. Exemple: you@company.com');
-        return;
-      }
-      if (!isValidPhone(phone)) {
-        setMessage('Téléphone invalide. Utilisez +212612345678');
-        return;
-      }
-
-      const btn = document.getElementById('signupBtn');
-      btn.disabled = true;
-      btn.textContent = 'Inscription...';
-
-      try {
-        const res = await fetch('/api/auth/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fullName, phone, email, password, role: 'CLIENT' })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          setMessage(data.error || 'Inscription échouée.');
-          return;
-        }
-
-        localStorage.setItem('crm_user', JSON.stringify(data));
-        setMessage('Inscription réussie. Redirection...', 'success');
-        setTimeout(() => { window.location.href = '/pages/clients.html'; }, 700);
-      } catch {
-        setMessage('Erreur réseau, réessayez.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Inscription';
-      }
+    async function submitForm(){
+      if(mode==='signup') return signup();
+      return login();
     }
 
-    async function login() {
-      setMessage('', 'info');
-
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!email || !password) {
-        setMessage('Merci de saisir votre email et mot de passe.');
-        return;
-      }
-      if (!isValidEmail(email)) {
-        setMessage('Email invalide.');
-        return;
-      }
-
-      const btn = document.getElementById('loginBtn');
-      btn.disabled = true;
-      btn.textContent = 'Connexion...';
-
-      try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          setMessage(data.error || 'Connexion échouée.');
-          return;
-        }
-
-        localStorage.setItem('crm_user', JSON.stringify(data));
-        const role = String(data.role || '').toUpperCase();
-        window.location.href = roleRouteMap[role] || '/pages/dashboard.html';
-      } catch {
-        setMessage('Erreur réseau, réessayez.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Se connecter';
-      }
+    async function signup(){
+      const fullName=document.getElementById('fullName').value.trim();
+      const phone=document.getElementById('phone').value.trim();
+      const email=identifierInput.value.trim();
+      const password=document.getElementById('password').value;
+      if(!fullName || !phone || !email || !password){ setMessage('Remplissez nom, téléphone, email et mot de passe.'); return; }
+      if(!isValidEmail(email)){ setMessage('Email invalide.'); return; }
+      if(!isValidPhone(phone)){ setMessage('Téléphone invalide.'); return; }
+      mainBtn.disabled=true; mainBtn.textContent='Création...';
+      try{
+        const res=await fetch('/api/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fullName, phone, email, password, role:'CLIENT', avatarUrl: avatarDataUrl || null})});
+        const data=await res.json(); if(!res.ok){ setMessage(data.error || 'Inscription échouée.'); return; }
+        setMessage('Compte créé. Vérifiez email OTP puis connectez-vous.', 'success');
+        setMode('login'); identifierInput.value=email;
+      }catch{ setMessage('Erreur réseau.'); }
+      finally{ mainBtn.disabled=false; mainBtn.textContent='Créer mon compte'; }
     }
+
+    async function login(){
+      const identifier=identifierInput.value.trim();
+      const password=document.getElementById('password').value;
+      if(!identifier || !password){ setMessage('Saisissez email/téléphone et mot de passe.'); return; }
+      mainBtn.disabled=true; mainBtn.textContent='Connexion...';
+      try{
+        const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identifier,password})});
+        const data=await res.json(); if(!res.ok){ setMessage(data.error || 'Connexion échouée.'); return; }
+        localStorage.setItem('crm_user', JSON.stringify(data));
+        window.location.href=roleRouteMap[String(data.role||'').toUpperCase()] || '/pages/dashboard.html';
+      }catch{ setMessage('Erreur réseau, réessayez.'); }
+      finally{ mainBtn.disabled=false; mainBtn.textContent='Se connecter'; }
+    }
+
+    setMode('login');
   </script>
 </body>
 </html>
