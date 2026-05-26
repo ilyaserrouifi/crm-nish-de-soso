@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
-import { isNonEmptyString } from '@/lib/validation'
+import { isNonEmptyString, isValidEmail, isValidPhone, normalizePhone } from '@/lib/validation'
 import { checkRateLimit, generateOtpCode, isStrongPassword } from '@/lib/auth-security'
 
 type SignupPayload = {
@@ -32,6 +32,15 @@ export async function POST(req: Request) {
     const email = body.email.toLowerCase().trim()
     const fullName = body.fullName.trim()
     const password = body.password
+    const phone = isNonEmptyString(body.phone) ? normalizePhone(body.phone.trim()) : ''
+
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+    }
+
+    if (!phone || !isValidPhone(phone)) {
+      return NextResponse.json({ error: 'Invalid phone format. Use +212612345678' }, { status: 400 })
+    }
 
     if (!isStrongPassword(password)) {
       return NextResponse.json({ error: 'Password must be at least 10 chars with upper/lower/number/symbol' }, { status: 400 })
@@ -54,7 +63,7 @@ export async function POST(req: Request) {
 
     await prisma.$executeRaw`
       INSERT INTO "UserProfile" ("userId", phone, timezone)
-      VALUES (${user.id}, ${isNonEmptyString(body.phone) ? body.phone : null}, ${isNonEmptyString(body.timezone) ? body.timezone : null})
+      VALUES (${user.id}, ${phone}, ${isNonEmptyString(body.timezone) ? body.timezone : null})
     `
 
     const otp = generateOtpCode()

@@ -106,6 +106,9 @@
     .divider::before, .divider::after { content:''; height:1px; background: var(--border-subtle); flex:1; }
     .msg { min-height: 20px; margin-top: 10px; font-size: 13px; color: var(--danger); }
     .msg.ok { color: var(--success); }
+    .msg.info { color: #93c5fd; }
+    .hint{margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.4}
+    .status-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;border:1px solid var(--border-subtle);color:var(--text-muted);margin-bottom:10px}
 
     @media (max-width: 930px) {
       .layout { grid-template-columns: 1fr; }
@@ -142,6 +145,7 @@
     </section>
 
     <section class="panel auth">
+      <span class="status-pill">Auth unified: static UI -> API routes</span>
       <h3>Connexion</h3>
       <p class="muted">Connectez-vous ou créez votre profil en quelques secondes.</p>
 
@@ -152,7 +156,8 @@
         </div>
         <div>
           <label for="phone">Téléphone</label>
-          <input id="phone" type="tel" placeholder="+212 ..." />
+          <input id="phone" type="tel" placeholder="+212612345678" />
+          <p class="hint">Format: +212612345678 (8-15 digits)</p>
         </div>
       </div>
 
@@ -161,6 +166,7 @@
 
       <label for="password">Mot de passe</label>
       <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+      <p class="hint">Password fort: 10+ caractères avec majuscule, minuscule, chiffre, symbole.</p>
 
       <button class="btn btn-primary" id="loginBtn">Se connecter</button>
 
@@ -184,24 +190,37 @@
     };
 
     const msgEl = document.getElementById('msg');
+
+    function setMessage(text, tone = 'error') {
+      msgEl.className = tone === 'success' ? 'msg ok' : tone === 'info' ? 'msg info' : 'msg';
+      msgEl.textContent = text;
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isValidPhone(phone) {
+      const normalized = phone.replace(/\s+/g, ).replace(/[()-]/g, );
+      return /^\+?[0-9]{8,15}$/.test(normalized);
+    }
     document.getElementById('password').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') login();
     });
     document.getElementById('loginBtn').addEventListener('click', login);
 
     document.getElementById('googleBtn').addEventListener('click', async () => {
-      msgEl.className = 'msg';
-      msgEl.textContent = '';
+      setMessage('', 'info');
       try {
         const res = await fetch('/api/auth/google');
         const data = await res.json();
         if (!res.ok) {
-          msgEl.textContent = data.error || 'Google OAuth indisponible.';
+          setMessage(data.error || 'Google OAuth indisponible.');
           return;
         }
         window.location.href = data.authUrl;
       } catch {
-        msgEl.textContent = 'Erreur réseau avec Google OAuth.';
+        setMessage('Erreur réseau avec Google OAuth.');
       }
     });
 
@@ -210,8 +229,7 @@
 
 
     async function signup() {
-      msgEl.textContent = '';
-      msgEl.className = 'msg';
+      setMessage('', 'info');
 
       const fullName = document.getElementById('fullName').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -219,7 +237,15 @@
       const password = document.getElementById('password').value;
 
       if (!fullName || !phone || !email || !password) {
-        msgEl.textContent = 'Merci de remplir nom, téléphone, email et mot de passe.';
+        setMessage('Merci de remplir nom, téléphone, email et mot de passe.');
+        return;
+      }
+      if (!isValidEmail(email)) {
+        setMessage('Email invalide. Exemple: you@company.com');
+        return;
+      }
+      if (!isValidPhone(phone)) {
+        setMessage('Téléphone invalide. Utilisez +212612345678');
         return;
       }
 
@@ -235,16 +261,15 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          msgEl.textContent = data.error || 'Inscription échouée.';
+          setMessage(data.error || 'Inscription échouée.');
           return;
         }
 
         localStorage.setItem('crm_user', JSON.stringify(data));
-        msgEl.className = 'msg ok';
-        msgEl.textContent = 'Inscription réussie. Redirection...';
+        setMessage('Inscription réussie. Redirection...', 'success');
         setTimeout(() => { window.location.href = '/pages/clients.html'; }, 700);
       } catch {
-        msgEl.textContent = 'Erreur réseau, réessayez.';
+        setMessage('Erreur réseau, réessayez.');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Inscription';
@@ -252,13 +277,16 @@
     }
 
     async function login() {
-      msgEl.textContent = '';
-      msgEl.className = 'msg';
+      setMessage('', 'info');
 
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       if (!email || !password) {
-        msgEl.textContent = 'Merci de saisir votre email et mot de passe.';
+        setMessage('Merci de saisir votre email et mot de passe.');
+        return;
+      }
+      if (!isValidEmail(email)) {
+        setMessage('Email invalide.');
         return;
       }
 
@@ -274,7 +302,7 @@
         });
         const data = await res.json();
         if (!res.ok) {
-          msgEl.textContent = data.error || 'Connexion échouée.';
+          setMessage(data.error || 'Connexion échouée.');
           return;
         }
 
@@ -282,7 +310,7 @@
         const role = String(data.role || '').toUpperCase();
         window.location.href = roleRouteMap[role] || '/pages/dashboard.html';
       } catch {
-        msgEl.textContent = 'Erreur réseau, réessayez.';
+        setMessage('Erreur réseau, réessayez.');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Se connecter';

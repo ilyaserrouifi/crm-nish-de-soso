@@ -17,3 +17,16 @@ export function parseJsonSafely<T>(value: string): T | null {
     return null
   }
 }
+
+export function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+export function normalizePhone(value: string) {
+  return value.replace(/\s+/g, '').replace(/[()-]/g, '')
+}
+
+export function isValidPhone(value: string) {
+  const normalized = normalizePhone(value)
+  return /^\+?[0-9]{8,15}$/.test(normalized)
+}
