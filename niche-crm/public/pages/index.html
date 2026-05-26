@@ -201,7 +201,7 @@
     }
 
     function isValidPhone(phone) {
-      const normalized = phone.replace(/\s+/g, ).replace(/[()-]/g, );
+      const normalized = phone.replace(/\s+/g, '').replace(/[()-]/g, '');
       return /^\+?[0-9]{8,15}$/.test(normalized);
     }
     document.getElementById('password').addEventListener('keydown', (e) => {
