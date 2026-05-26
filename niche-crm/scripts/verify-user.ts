@@ -12,16 +12,12 @@ async function main() {
 
   const verifiedAt = new Date()
 
-  await prisma.userProfile.upsert({
-    where: { userId: user.id },
-    create: {
-      userId: user.id,
-      emailVerifiedAt: verifiedAt,
-    },
-    update: {
-      emailVerifiedAt: verifiedAt,
-    },
-  })
+  await prisma.$executeRaw`
+    INSERT INTO "UserProfile" ("id", "userId", "emailVerifiedAt", "createdAt", "updatedAt")
+    VALUES (gen_random_uuid(), ${user.id}, ${verifiedAt}, NOW(), NOW())
+    ON CONFLICT ("userId")
+    DO UPDATE SET "emailVerifiedAt" = ${verifiedAt}, "updatedAt" = NOW()
+  `
 
   console.log(`Verified user: ${user.email} at ${verifiedAt.toISOString()}`)
 }
