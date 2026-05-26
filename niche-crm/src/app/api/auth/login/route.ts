@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { isNonEmptyString, isValidEmail, isValidPhone, normalizePhone } from '@/lib/validation'
 import { checkRateLimit } from '@/lib/auth-security'
+import { hasUserProfileTable } from '@/lib/db-capabilities'
 
 type LoginPayload = {
   identifier: unknown
@@ -41,12 +42,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Use a valid email or phone number' }, { status: 400 })
     }
 
+    const userProfileTableExists = await hasUserProfileTable()
+
     let user: { id: string; name: string; email: string; role: string; password: string } | null = null
     let emailVerifiedAt: Date | null = null
 
     if (identifierIsEmail) {
       user = await prisma.user.findUnique({ where: { email: identifier.toLowerCase() } })
-      if (user) {
+      if (user && userProfileTableExists) {
         try {
           const matches = await prisma.$queryRaw<Array<{ emailVerifiedAt: Date | null }>>`
             SELECT "emailVerifiedAt"
@@ -59,8 +62,14 @@ export async function POST(req: Request) {
           console.error('POST /api/auth/login profile lookup warning', profileLookupError)
           emailVerifiedAt = null
         }
+      } else if (user) {
+        emailVerifiedAt = null
       }
     } else {
+      if (!userProfileTableExists) {
+        return NextResponse.json({ error: 'Phone login temporarily unavailable. Contact support.' }, { status: 503 })
+      }
+
       const normalizedPhone = normalizePhone(identifier)
       try {
         const matches = await prisma.$queryRaw<
