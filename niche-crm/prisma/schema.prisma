@@ -8,12 +8,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      String   @default("FREELANCER")
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String
+  role          String         @default("FREELANCER")
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?
+  oauthAccounts OAuthAccount[]
 }
 
 model Lead {
@@ -33,7 +35,7 @@ model Lead {
 }
 
 model Caller {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   name       String
   username   String
   phone      String
@@ -42,8 +44,8 @@ model Caller {
   salary     Float
   salaryType String
   niche      String
-  score      String   @default("B")
-  createdAt  DateTime @default(now())
+  score      String    @default("B")
+  createdAt  DateTime  @default(now())
   callLogs   CallLog[]
 }
 
@@ -164,36 +166,39 @@ model Invoice {
 }
 
 model Expense {
-  id        String   @id @default(cuid())
-  category  String
-  amount    Float
-  date      DateTime
-  vendor    String
-  recurring Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  category      String
+  amount        Float
+  date          DateTime
+  vendor        String
+  recurring     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?   @relation(fields: [userProfileId], references: [id])
+  oauthAccounts OAuthAccount[]
+  userProfileId String?
 }
 
 model ColdCaller {
-  id                   String   @id @default(cuid())
+  id                   String    @id @default(cuid())
   name                 String
   username             String
   phone                String
   email                String
   startDate            DateTime?
   niche                String?
-  salaryType           String   @default("fixed")
-  salaryBase           Float    @default(0)
-  commissionPerMeeting Float    @default(0)
-  bonusPerClose        Float    @default(0)
-  status               String   @default("active")
-  score                String   @default("D")
-  callsMade            Int      @default(0)
-  pickups              Int      @default(0)
-  meetingsBooked       Int      @default(0)
-  noShows              Int      @default(0)
-  closes               Int      @default(0)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  salaryType           String    @default("fixed")
+  salaryBase           Float     @default(0)
+  commissionPerMeeting Float     @default(0)
+  bonusPerClose        Float     @default(0)
+  status               String    @default("active")
+  score                String    @default("D")
+  callsMade            Int       @default(0)
+  pickups              Int       @default(0)
+  meetingsBooked       Int       @default(0)
+  noShows              Int       @default(0)
+  closes               Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model Income {
@@ -221,30 +226,81 @@ model Investment {
 }
 
 model PipelineHistory {
-  id        String   @id @default(cuid())
-  leadId    String
-  fromStage String
-  toStage   String
-  note      String?
-  actor     String   @default("system")
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  leadId        String
+  fromStage     String
+  toStage       String
+  note          String?
+  actor         String         @default("system")
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?   @relation(fields: [userProfileId], references: [id])
+  oauthAccounts OAuthAccount[]
+  userProfileId String?
 }
 
 model AutomationEvent {
-  id        String   @id @default(cuid())
-  type      String
-  leadId    String?
-  company   String?
-  status    String   @default("PENDING")
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  type          String
+  leadId        String?
+  company       String?
+  status        String         @default("PENDING")
+  createdAt     DateTime       @default(now())
+  profile       UserProfile?   @relation(fields: [userProfileId], references: [id])
+  oauthAccounts OAuthAccount[]
+  userProfileId String?
 }
 
 model ClientPortalMessage {
-  id          String   @id @default(cuid())
-  clientId     String
-  senderRole   String
-  senderName   String
-  message      String
+  id            String   @id @default(cuid())
+  clientId      String
+  senderRole    String
+  senderName    String
+  message       String
   attachmentUrl String?
-  createdAt    DateTime @default(now())
+  createdAt     DateTime @default(now())
+}
+
+model UserProfile {
+  id              String            @id @default(cuid())
+  userId          String            @unique
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone           String?
+  avatarUrl       String?
+  timezone        String?
+  emailVerifiedAt DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Expense         Expense[]
+  PipelineHistory PipelineHistory[]
+  AutomationEvent AutomationEvent[]
+}
+
+model OAuthAccount {
+  id                String           @id @default(cuid())
+  userId            String
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          String
+  providerUserId    String
+  accessToken       String?
+  refreshToken      String?
+  createdAt         DateTime         @default(now())
+  Expense           Expense?         @relation(fields: [expenseId], references: [id])
+  expenseId         String?
+  PipelineHistory   PipelineHistory? @relation(fields: [pipelineHistoryId], references: [id])
+  pipelineHistoryId String?
+  AutomationEvent   AutomationEvent? @relation(fields: [automationEventId], references: [id])
+  automationEventId String?
+
+  @@unique([provider, providerUserId])
+}
+
+model EmailVerificationCode {
+  id         String    @id @default(cuid())
+  email      String
+  code       String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([email, createdAt])
 }

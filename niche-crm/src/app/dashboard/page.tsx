@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
 
 type ClientRow = {
   id: string
@@ -11,56 +10,25 @@ type ClientRow = {
   city?: string | null
 }
 
-type GeoRow = {
-  country: string
-  count: number
-}
-
-function isMissingColumnError(error: unknown, columnName: string): boolean {
-  return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2022' &&
-    typeof error.meta?.column === 'string' &&
-    error.meta.column.includes(columnName)
-  )
-}
+type GeoRow = { country: string; count: number }
 
 async function fetchClientsWithLocationFallback(): Promise<ClientRow[]> {
-  try {
-    return await prisma.client.findMany({
-      select: {
-        id: true,
-        company: true,
-        name: true,
-        status: true,
-        country: true,
-        city: true,
-        mrr: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-  } catch (error) {
-    if (!isMissingColumnError(error, 'Client.country') && !isMissingColumnError(error, 'Client.city')) {
-      throw error
-    }
+  const baseClients = await prisma.client.findMany({
+    select: {
+      id: true,
+      company: true,
+      name: true,
+      status: true,
+      mrr: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  })
 
-    const baseClients = await prisma.client.findMany({
-      select: {
-        id: true,
-        company: true,
-        name: true,
-        status: true,
-        mrr: true,
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-
-    return baseClients.map((client) => ({
-      ...client,
-      country: null,
-      city: null,
-    }))
-  }
+  return baseClients.map((client) => ({
+    ...client,
+    country: null,
+    city: null,
+  }))
 }
 
 async function getDashboardData() {

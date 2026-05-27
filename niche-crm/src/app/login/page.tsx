@@ -17,12 +17,17 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier: email, password }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error); setLoading(false); return }
       localStorage.setItem('user', JSON.stringify(data))
-      router.push('/pages/dashboard.html')
+      const role = (data.role || '').toUpperCase()
+      if (role === 'FINANCE') router.push('/pages/finance.html')
+      else if (role === 'PROJECT_MANAGER') router.push('/pages/projects.html')
+      else if (role === 'CLIENT') router.push('/pages/clients.html')
+      else if (role === 'FREELANCER') router.push('/pages/freelancers.html')
+      else router.push('/pages/dashboard.html')
     } catch {
       setError('Connection error')
       setLoading(false)
